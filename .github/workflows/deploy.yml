@@ -27,10 +27,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (use PAT)
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./dist
           publish_branch: gh-pages
-          # github_token is provided automatically by Actions
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Use a Personal Access Token stored in repository secrets as GH_PAT
+          # Create a PAT with 'repo' scope and add it to Settings -> Secrets -> Actions as GH_PAT
+          github_token: ${{ secrets.GH_PAT }}
