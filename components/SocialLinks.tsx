@@ -60,6 +60,8 @@ const socialLinks = [
 ];
 
 const SocialLinks: React.FC = () => {
+  // Use Vite's base URL so assets work when site is hosted under a subpath (GitHub Pages)
+  const base = (import.meta as any).env?.BASE_URL ?? '/';
   return (
     <div className="absolute bottom-16 left-8">
       <div className="flex items-center space-x-5">
@@ -96,7 +98,7 @@ const SocialLinks: React.FC = () => {
                     {(link.name === 'TikTok' || link.name === 'Spotify') ? (
                       // prefer local downloaded PNG (falls back to inline SVG if missing)
                       <img
-                        src={link.name === 'TikTok' ? '/assets/icons/tiktok.png' : '/assets/icons/spotify.png'}
+                        src={link.name === 'TikTok' ? `${base}assets/icons/tiktok.png` : `${base}assets/icons/spotify.png`}
                         alt={link.name}
                         className={sizeClass}
                         style={{ display: 'block' }}

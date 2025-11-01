@@ -1,0 +1,4 @@
+/* Minimal index.css to satisfy build. Tailwind is loaded via CDN in index.html, so this can be empty or contain small tweaks. */
+html, body, #root {
+  height: 100%;
+}

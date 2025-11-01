@@ -10,8 +10,13 @@ import LivePage from './components/pages/LivePage';
 import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
 
-// Placeholder images for the background slider.
+// Background images for the slider.
+// If you want to use a local photo, put it in `public/assets/background.jpg`.
+// Files in `public/` are served from the site root, so the path is `/assets/background.jpg`.
+// Use import.meta.env.BASE_URL so paths are correct when deployed under a repo subpath (GitHub Pages).
+const base = (import.meta as any).env?.BASE_URL ?? '/';
 const images = [
+  `${base}assets/background.svg`, // local photo (preferred) — placeholder SVG added in public/assets
   'https://images.unsplash.com/photo-1516245834210-c4c1427873AB?q=80&w=2070&auto=format&fit=crop',
   'https://images.unsplash.com/photo-1499972935497-21946084a914?q=80&w=2070&auto=format&fit=crop',
   'https://images.unsplash.com/photo-1511889498262-5a94773a4353?q=80&w=2070&auto=format&fit=crop',
