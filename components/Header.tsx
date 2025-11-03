@@ -34,12 +34,13 @@ const Header: React.FC<HeaderProps> = ({ isMenuOpen, onMenuToggle }) => {
 
         <button
           onClick={onMenuToggle}
-          className="ml-4 relative z-50 w-8 h-8 flex flex-col justify-between items-center md:ml-6"
+          className="ml-4 relative z-50 w-8 h-8 flex flex-col justify-center items-center md:ml-6"
           aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
         >
-          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-[10px]' : ''}`}></span>
-          <span className={`block w-full h-0.5 bg-white transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 -translate-y-[10px]' : ''}`}></span>
+          {/* Two-line hamburger: top and bottom lines. On open they rotate to form an X. */}
+          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? 'rotate-45' : '-translate-y-2'}`}></span>
+          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? '-rotate-45' : 'translate-y-2'}`}></span>
         </button>
       </div>
     </header>
