@@ -35,7 +35,8 @@ const LivePage: React.FC = () => {
             <p className="text-lg">{show.event}</p>
             <p className="text-gray-400">{show.details}</p>
             <a href={show.tickets} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-yellow-400 hover:text-yellow-300 transition-colors">
-              TICKETS
+              {/* 表示は斜線（取り消し線）にする：<s>タグや Tailwind の line-through を利用 */}
+              <span className="line-through decoration-gray-400 decoration-2">TICKETS</span>
             </a>
           </div>
         ))}
