@@ -58,9 +58,10 @@ const MusicPage: React.FC = () => {
       <div className="space-y-12">
         {releases.map((release) => (
           <div key={release.title} className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <a href={release.link} target="_blank" rel="noopener noreferrer">
-                <img src={release.artwork} alt={`${release.title} artwork`} className="w-48 h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105" />
-            </a>
+      <a href={release.link} target="_blank" rel="noopener noreferrer">
+        {/* Mobile: artwork full width above text. Desktop: fixed square artwork */}
+        <img src={release.artwork} alt={`${release.title} artwork`} className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105" />
+      </a>
             <div className="text-center md:text-left">
               <h3 className="text-3xl font-bold">{release.title}</h3>
               <p className="text-lg text-gray-400">{release.type} - {release.year}</p>
