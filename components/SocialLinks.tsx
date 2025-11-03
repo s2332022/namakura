@@ -82,9 +82,8 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
           const isSpotify = link.name === 'Spotify';
           const isTikTok = link.name === 'TikTok';
           const sizeClass = isSpotify || isTikTok ? 'w-6 h-6 md:w-7 md:h-7' : 'w-5 h-5 md:w-6 md:h-6';
-          const spanClass = isSpotify || isTikTok
-            ? 'inline-block p-1 rounded-md'
-            : 'inline-block p-2 rounded-md bg-black/20 hover:bg-black/40';
+          // use the same thin semi-transparent black background as other icons
+          const spanClass = 'inline-block p-2 rounded-md bg-black/20 hover:bg-black/40';
 
           return (
             <a
