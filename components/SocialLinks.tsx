@@ -59,12 +59,24 @@ const socialLinks = [
   { name: 'Eggs', href: 'https://eggs.mu/artist/NamakuraMetro', icon: EggsIcon, color: '#FFD166' },
 ];
 
-const SocialLinks: React.FC = () => {
-  // Use Vite's base URL so assets work when site is hosted under a subpath (GitHub Pages)
-  const base = (import.meta as any).env?.BASE_URL ?? '/';
-  return (
-    <div className="absolute bottom-16 left-8">
-      <div className="flex items-center space-x-5">
+// Use Vite's base URL so assets work when site is hosted under a subpath (GitHub Pages)
+const base = (import.meta as any).env?.BASE_URL ?? '/';
+
+interface SocialLinksProps {
+  isMenuOpen?: boolean;
+}
+
+const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
+    return (
+      // Use fixed so icons are positioned relative to viewport and won't be clipped by ancestor overflow
+      // Small screens: bottom-right horizontal. Desktop: right-center vertical (like reference site).
+      <div
+        className={`fixed right-4 bottom-16 md:top-1/2 md:right-8 md:bottom-auto md:transform md:-translate-y-1/2 transition-opacity duration-300 ${
+          isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+        style={{ zIndex: 15 }}
+      >
+        <div className="flex md:flex-col items-center md:space-y-5 space-x-5 md:space-x-0">
         {socialLinks.map((link) => {
           const Icon = link.icon;
           const isSpotify = link.name === 'Spotify';
@@ -92,28 +104,28 @@ const SocialLinks: React.FC = () => {
                   window.location.href = link.href;
                 }
               }}
-              className="text-white transition-opacity hover:opacity-70 z-50 pointer-events-auto"
+              className="text-white transition-opacity hover:opacity-70"
             >
               <span className={spanClass}>
-                    {(link.name === 'TikTok' || link.name === 'Spotify') ? (
-                      // prefer local downloaded PNG (falls back to inline SVG if missing)
-                      <img
-                        src={link.name === 'TikTok' ? `${base}assets/icons/tiktok.png` : `${base}assets/icons/spotify.png`}
-                        alt={link.name}
-                        className={sizeClass}
-                        style={{ display: 'block' }}
-                        onError={(e) => {
-                          // if image missing or fails, replace with the inline Icon component
-                          const target = e.currentTarget as HTMLImageElement;
-                          target.replaceWith(
-                            (React.createElement(Icon as any, { className: sizeClass, style: { color: link.color, display: 'block' } }))
-                          );
-                        }}
-                      />
-                    ) : (
-                      <Icon className={sizeClass} style={{ color: link.color, display: 'block' }} />
-                    )}
-                  </span>
+                {(link.name === 'TikTok' || link.name === 'Spotify') ? (
+                  // prefer local downloaded PNG (falls back to inline SVG if missing)
+                  <img
+                    src={link.name === 'TikTok' ? `${base}assets/icons/tiktok.png` : `${base}assets/icons/spotify.png`}
+                    alt={link.name}
+                    className={sizeClass}
+                    style={{ display: 'block' }}
+                    onError={(e) => {
+                      // if image missing or fails, replace with the inline Icon component
+                      const target = e.currentTarget as HTMLImageElement;
+                      target.replaceWith(
+                        React.createElement(Icon as any, { className: sizeClass, style: { color: link.color, display: 'block' } })
+                      );
+                    }}
+                  />
+                ) : (
+                  <Icon className={sizeClass} style={{ color: link.color, display: 'block' }} />
+                )}
+              </span>
             </a>
           );
         })}

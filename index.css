@@ -1,4 +1,76 @@
-/* Minimal index.css to satisfy build. Tailwind is loaded via CDN in index.html, so this can be empty or contain small tweaks. */
+/* Global design tokens inspired by the reference site (typography, spacing, colors) */
+:root{
+  --bg:#000000;
+  --panel: rgba(255,255,255,0.04);
+  --muted:#9CA3AF; /* gray-400 */
+  --accent:#FFD166; /* soft accent */
+}
+
 html, body, #root {
   height: 100%;
+  background: var(--bg);
+  color: #ffffff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
+
+/* Big spaced-out hero headings */
+.site-hero {
+  min-height: 86vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:4rem 1.5rem;
+}
+.site-hero h1{
+  font-weight:900;
+  letter-spacing:0.28em;
+  font-size:clamp(3rem, 8vw, 6.5rem);
+  margin:0;
+}
+.site-hero p{
+  margin-top:0.6rem;
+  color:var(--muted);
+  font-size:1.125rem;
+}
+
+/* Header styles override small bits */
+.site-header{
+  position:fixed;
+  left:0;right:0;top:0;z-index:40;
+  backdrop-filter: blur(6px);
+}
+.site-header .logo{
+  font-weight:800;
+  font-size:1.25rem;
+  letter-spacing:0.12em;
+}
+
+/* Footer */
+.site-footer{
+  padding:3rem 1.5rem;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* Utility container consistent width */
+.container{max-width:1100px;margin-left:auto;margin-right:auto;padding-left:1rem;padding-right:1rem}
+
+/* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
+html, body {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100vh; /* ensure full-screen sections */
+  display: block;
+}
+
+/* account for fixed header when snapping */
+html, body, #root {
+  scroll-padding-top: 88px; /* approximate header height */
+}
+

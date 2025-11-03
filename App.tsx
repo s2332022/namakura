@@ -9,6 +9,7 @@ import MusicPage from './components/pages/MusicPage';
 import LivePage from './components/pages/LivePage';
 import NewsPage from './components/pages/NewsPage';
 import ContactPage from './components/pages/ContactPage';
+import Footer from './components/Footer';
 
 // Background images for the slider.
 // If you want to use a local photo, put it in `public/assets/background.jpg`.
@@ -43,25 +44,26 @@ const App: React.FC = () => {
       
       <main className="relative z-10">
         {/* Hero Section */}
-        <div className="h-screen flex flex-col items-center justify-center text-center">
-            <h1 className="text-6xl md:text-8xl font-black tracking-widest uppercase" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
-              Namakura Metro
-            </h1>
-            <p className="text-lg md:text-xl tracking-wider mt-2">なまくらメトロ</p>
-        </div>
+          <section className="site-hero snap-section">
+          <div>
+            <h1>NAMAKURA METRO</h1>
+            <p>なまくらメトロ</p>
+          </div>
+        </section>
 
         {/* Content Sections */}
         <div className="bg-black bg-opacity-60 backdrop-blur-md">
-            <section id="profile"><ProfilePage /></section>
-            <section id="music"><MusicPage /></section>
-            <section id="live"><LivePage /></section>
-            <section id="news"><NewsPage /></section>
-            <section id="contact"><ContactPage /></section>
+            <section id="profile" className="snap-section"><ProfilePage /></section>
+            <section id="music" className="snap-section"><MusicPage /></section>
+            <section id="live" className="snap-section"><LivePage /></section>
+            <section id="news" className="snap-section"><NewsPage /></section>
+            <section id="contact" className="snap-section"><ContactPage /></section>
         </div>
       </main>
 
-      <SocialLinks />
+  <SocialLinks isMenuOpen={isMenuOpen} />
       <NewsTicker />
+      <Footer />
     </div>
   );
 };

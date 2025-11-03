@@ -8,39 +8,40 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isMenuOpen, onMenuToggle }) => {
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 p-4 md:p-8 flex justify-between items-center">
-      <a href="#top" onClick={handleLogoClick} className="text-2xl md:text-3xl font-bold tracking-wider uppercase transition-opacity hover:opacity-70">
-        なまくらメトロ（仮）
-      </a>
+    <header className="site-header container flex items-center justify-between py-4">
+      <div className="flex-1 flex items-center">
+        {/* left: simple nav (hidden on small screens) */}
+        <nav className="hidden md:flex space-x-6 text-sm text-white/80">
+          <a href="#profile" className="uppercase tracking-wider">Profile</a>
+          <a href="#music" className="uppercase tracking-wider">Music</a>
+          <a href="#live" className="uppercase tracking-wider">Live</a>
+        </nav>
+      </div>
 
-      <button
-        onClick={onMenuToggle}
-        className="relative z-50 w-8 h-8 flex flex-col justify-between items-center"
-        aria-label="Toggle menu"
-      >
-        <span
-          className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? 'rotate-45 translate-y-[10px]' : ''
-          }`}
-        ></span>
-        <span
-          className={`block w-full h-0.5 bg-white transition-opacity duration-300 ease-in-out ${
-            isMenuOpen ? 'opacity-0' : ''
-          }`}
-        ></span>
-        <span
-          className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? '-rotate-45 -translate-y-[10px]' : ''
-          }`}
-        ></span>
-      </button>
+      <div className="flex-0 logo text-center">
+        <a href="#top" onClick={handleLogoClick} className="logo inline-block text-white no-underline">なまくらメトロ</a>
+      </div>
+
+      <div className="flex-1 flex items-center justify-end">
+        <div className="hidden md:flex items-center space-x-4">
+          <a href="#news" className="text-sm text-white/80 uppercase tracking-wider">News</a>
+          <a href="#contact" className="text-sm text-white/80 uppercase tracking-wider">Contact</a>
+        </div>
+
+        <button
+          onClick={onMenuToggle}
+          className="ml-4 relative z-50 w-8 h-8 flex flex-col justify-between items-center md:ml-6"
+          aria-label="Toggle menu"
+        >
+          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-[10px]' : ''}`}></span>
+          <span className={`block w-full h-0.5 bg-white transition-opacity duration-300 ease-in-out ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+          <span className={`block w-full h-0.5 bg-white transition-transform duration-300 ease-in-out ${isMenuOpen ? '-rotate-45 -translate-y-[10px]' : ''}`}></span>
+        </button>
+      </div>
     </header>
   );
 };
