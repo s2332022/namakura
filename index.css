@@ -59,19 +59,25 @@ html, body, #root {
 
 /* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
 html, body {
-  scroll-snap-type: y mandatory;
+  /* use proximity to reduce janky forced snaps at top/bottom on mobile
+     and use overscroll-behavior to avoid scroll chaining/bounce affecting snapping */
+  scroll-snap-type: y proximity;
   scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
 }
 
 .snap-section {
   scroll-snap-align: start;
-  min-height: 100vh; /* ensure full-screen sections */
+  /* use the CSS variable --vh (set in JS) to avoid mobile 100vh issues */
+  min-height: calc(var(--vh, 1vh) * 100);
   display: block;
 }
 
 /* account for fixed header when snapping */
 html, body, #root {
+  /* account for fixed header and possible bottom safe area on mobile */
   scroll-padding-top: 88px; /* approximate header height */
+  scroll-padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Mobile-specific adjustments */
@@ -89,7 +95,7 @@ html, body, #root {
   .container{padding-left:0.75rem;padding-right:0.75rem}
 
   /* make snap sections take full viewport minus header more reliably on mobile */
-  .snap-section{min-height: calc(100vh - 64px)}
+  .snap-section{min-height: calc(var(--vh, 1vh) * 100 - 64px)}
 
   /* Footer spacing smaller */
   .site-footer{padding:2rem 1rem}
