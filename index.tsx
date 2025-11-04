@@ -11,6 +11,19 @@ function setVh() {
 setVh();
 window.addEventListener('resize', setVh);
 
+// Toggle header scrolled state to apply blurred/translucent background
+function setHeaderScrolled() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  if (window.scrollY > 20) header.classList.add('scrolled');
+  else header.classList.remove('scrolled');
+}
+setHeaderScrolled();
+window.addEventListener('scroll', () => {
+  // throttle lightly using requestAnimationFrame
+  requestAnimationFrame(setHeaderScrolled);
+});
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");

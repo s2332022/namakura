@@ -23,8 +23,9 @@ function main() {
     return ['.jpg', '.jpeg', '.png', '.webp', '.svg'].includes(ext);
   });
 
-  // sort for determinism
-  files.sort();
+  // natural (numeric-aware) sort for determinism and human-friendly ordering
+  // so files like "background (1).jpg" .. "background (10).jpg" sort as expected
+  files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
   writeGenerated(files);
 }
