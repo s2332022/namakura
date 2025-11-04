@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import BackgroundSlider from './components/BackgroundSlider';
+import Splash from './components/Splash';
 
 // Lazy-load heavier or below-the-fold components to reduce initial bundle size.
 const SocialLinks = lazy(() => import('./components/SocialLinks'));
@@ -33,6 +34,8 @@ const initialImages = [defaultLocal, defaultFallback];
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // splash visibility state
+  const [splashVisible, setSplashVisible] = useState(true);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -66,16 +69,36 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Splash lifecycle: wait for window 'load' (all resources) plus a small min delay,
+  // then fade out the splash. Keeps a minimum splash duration for smoothness.
+  useEffect(() => {
+    let timeout: number | undefined;
+    function finish() {
+      timeout = window.setTimeout(() => setSplashVisible(false), 600);
+    }
+
+    if (document.readyState === 'complete') {
+      finish();
+    } else {
+      window.addEventListener('load', finish, { once: true });
+    }
+
+    return () => {
+      if (timeout) window.clearTimeout(timeout);
+      window.removeEventListener('load', finish as any);
+    };
+  }, []);
+
   return (
     <div className="bg-black text-white font-sans">
-      <div id="top"></div>
-      <BackgroundSlider images={images} />
-      <Header isMenuOpen={isMenuOpen} onMenuToggle={toggleMenu} />
+  <div id="top"></div>
+  <BackgroundSlider images={images} />
+  <Header isMenuOpen={isMenuOpen} onMenuToggle={toggleMenu} />
       <Suspense fallback={null}>
         <MenuOverlay isOpen={isMenuOpen} onLinkClick={closeMenu} />
       </Suspense>
       
-      <main className="relative z-10">
+  <main className={`relative z-10 ${splashVisible ? 'site-content--hidden' : 'site-content--visible'}`}>
         {/* Hero Section */}
           <section className="site-hero snap-section">
           <div>
@@ -107,6 +130,8 @@ const App: React.FC = () => {
   <Suspense fallback={null}><SocialLinks isMenuOpen={isMenuOpen} /></Suspense>
     <Suspense fallback={null}><NewsTicker /></Suspense>
     <Suspense fallback={null}><Footer /></Suspense>
+    {/* Splash overlay */}
+    <Splash className={splashVisible ? '' : 'hidden'} />
     </div>
   );
 };
