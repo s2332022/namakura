@@ -7,7 +7,7 @@ const ContactPage: React.FC = () => {
       <div className="text-center space-y-4 pb-24">
         <p>ライブ出演のご依頼、その他各種お問い合わせは、下記のメールアドレスまでご連絡ください。</p>
         <a href="mailto:contact@namakurametro.com" className="text-2xl text-yellow-400 hover:text-yellow-300 transition-colors">
-          メアドなかったわ@gmail.com
+          namakura.metro@gmail.com
         </a>
       </div>
     </PageContainer>
