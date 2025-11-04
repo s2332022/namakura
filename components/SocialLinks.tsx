@@ -62,9 +62,15 @@ const SpotifyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
-const EggsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="14" fontWeight="bold">卵</text>
+const AppleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg
+    {...props}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path d="M16.2 12.6c-.02-1.5.67-2.63 2.05-3.47-.77-1.13-1.95-1.76-3.44-1.88-1.44-.13-2.97.85-3.52.85-.57 0-1.82-.81-2.99-.79-1.55.02-3.01.9-3.82 2.29-1.63 2.75-.42 6.82 1.16 9.06.77 1.1 1.68 2.35 2.89 2.3 1.14-.05 1.57-.74 2.96-.74 1.38 0 1.77.74 2.98.71 1.23-.02 2.02-1.12 2.77-2.24.85-1.27 1.2-2.5 1.22-2.56-.03-.01-2.33-.9-2.36-3.53zM13.92 5.4c.63-.76 1.06-1.83.94-2.9-1.01.04-2.09.67-2.77 1.47-.6.72-1.11 1.8-.97 2.85 1.08.08 2.18-.54 2.8-1.42z"/>
   </svg>
 );
 
@@ -75,7 +81,7 @@ const socialLinks = [
   { name: 'YouTube', href: 'https://www.youtube.com/channel/UCFpddgdwvz_33p_L5t5O2jQ', icon: YouTubeIcon, color: '#FF0000' },
   { name: 'TikTok', href: 'https://www.tiktok.com/@namakura_metro?is_from_webapp=1&sender_device=pc', icon: TikTokIcon, color: '#69C9D0' },
   { name: 'Spotify', href: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw', icon: SpotifyIcon, color: '#1DB954' },
-  { name: 'Eggs', href: 'https://eggs.mu/artist/NamakuraMetro', icon: EggsIcon, color: '#FFD166' },
+  { name: 'Apple Music', href: 'https://music.apple.com/jp/artist/%E3%81%AA%E3%81%BE%E3%81%8F%E3%82%89%E3%83%A1%E3%83%88%E3%83%AD/1714566073', icon: AppleIcon, color: '#FA57C1' },
 ];
 
 // Use Vite's base URL so assets work when site is hosted under a subpath (GitHub Pages)
@@ -100,7 +106,9 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
           const Icon = link.icon;
           const isSpotify = link.name === 'Spotify';
           const isTikTok = link.name === 'TikTok';
-          const sizeClass = isSpotify || isTikTok ? 'w-6 h-6 md:w-7 md:h-7' : 'w-5 h-5 md:w-6 md:h-6';
+          const isApple = link.name === 'Apple Music';
+          // Make Apple Music icon the same larger size as Spotify/TikTok so visuals match
+          const sizeClass = isSpotify || isTikTok || isApple ? 'w-6 h-6 md:w-7 md:h-7' : 'w-5 h-5 md:w-6 md:h-6';
           // use the same thin semi-transparent black background as other icons
           const spanClass = 'inline-block p-2 rounded-md bg-black/20 hover:bg-black/40';
 
