@@ -24,6 +24,17 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
     images.forEach((src, i) => {
       // skip if already marked loaded
       if (loadedRef.current[i]) return;
+      // If the image is an inline/data URL or an SVG, treat it as already available
+      // to avoid a momentary state where no images have loaded yet.
+      if (typeof src === 'string' && (src.startsWith('data:') || src.toLowerCase().endsWith('.svg'))) {
+        loadedRef.current[i] = true;
+        setLoaded((prev) => {
+          const next = [...prev];
+          next[i] = true;
+          return next;
+        });
+        return;
+      }
       const img = new Image();
       img.src = src;
       img.onload = () => {
@@ -59,8 +70,15 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
         img.onerror = null;
       });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [images.join('|')]);
+      // After starting preload, ensure currentIndex points to the first already-loaded image
+      // (helps when we marked SVG/data images as loaded above).
+      setTimeout(() => {
+        const firstLoaded = loadedRef.current.findIndex(Boolean);
+        if (firstLoaded >= 0) setCurrentIndex(firstLoaded);
+      }, 0);
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [images.join('|')]);
 
   // only advance when the next image is loaded (to avoid blank flashes)
   useEffect(() => {
@@ -107,7 +125,10 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
       <div
         className="absolute inset-0 bg-black"
         style={{
-          backgroundImage: `url(${base}assets/background.svg)`,
+          // Use the last image in the list (usually the fallback SVG) as a background
+          // This is more robust than hard-coding the path and prevents a brief
+          // fully-blank viewport while images are still being marked loaded.
+          backgroundImage: images && images.length ? `url(${images[images.length - 1]})` : `url(${base}assets/background.svg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
