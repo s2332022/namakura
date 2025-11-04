@@ -18,7 +18,7 @@ const NewsTicker: React.FC = () => {
   const [styleVars, setStyleVars] = useState({distance: 0, duration: 10});
 
   // pixels per second speed; tweak if you want faster/slower ticker
-  const SPEED_PX_PER_SEC = 40;
+  const SPEED_PX_PER_SEC = 30;
 
   useEffect(() => {
     if (!stripRef.current) return;
