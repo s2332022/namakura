@@ -15,6 +15,11 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
 
   // preload images
   useEffect(() => {
+    // When the images prop changes, reset our loaded tracking so we don't
+    // accidentally show a stale index while new images are being fetched.
+    loadedRef.current = images.map(() => false);
+    setLoaded(images.map(() => false));
+
     const imgs: HTMLImageElement[] = [];
     images.forEach((src, i) => {
       // skip if already marked loaded
@@ -28,6 +33,9 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           next[i] = true;
           return next;
         });
+        // If the currently displayed image isn't loaded yet, show this one
+        // as soon as it becomes available so the UI doesn't stay blank.
+        setCurrentIndex((cur) => (loadedRef.current[cur] ? cur : i));
       };
       img.onerror = () => {
         // mark as loaded to avoid blocking rotation forever
@@ -37,12 +45,19 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           next[i] = true;
           return next;
         });
+        setCurrentIndex((cur) => (loadedRef.current[cur] ? cur : i));
       };
       imgs.push(img);
     });
 
     return () => {
-      // no-op cleanup; browser will collect Image objects
+      // allow GC of Image objects
+      imgs.forEach((img) => {
+        // @ts-ignore
+        img.onload = null;
+        // @ts-ignore
+        img.onerror = null;
+      });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [images.join('|')]);
@@ -104,12 +119,13 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           key={image + index}
           src={image}
           alt={`バンド なまくらメトロ イメージ ${index + 1}`}
+          // Only show an image when it's both the current index and has finished loading.
           className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2800ms]
-            ${index === currentIndex ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
+            ${index === currentIndex && loaded[index] ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
           style={{
             transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)',
             // keep images above the fallback bg; ensure current image sits on top
-            zIndex: index === currentIndex ? 2 : 1,
+            zIndex: index === currentIndex && loaded[index] ? 2 : 1,
             pointerEvents: 'none',
             willChange: 'opacity, transform',
           }}
