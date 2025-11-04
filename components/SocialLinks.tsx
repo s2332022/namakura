@@ -21,25 +21,44 @@ const YouTubeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const TikTokIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    {/* TikTok gradient to match official color (cyan -> pink) */}
-    <defs>
-      <linearGradient id="tiktokGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#69C9D0" />
-        <stop offset="100%" stopColor="#EE1D52" />
-      </linearGradient>
-    </defs>
-    <circle cx="12" cy="12" r="12" fill="url(#tiktokGrad)" />
-    <path fill="#fff" d="M12.005 2v.014c0 .18.006.36.018.538.353.03.7.092 1.03.184.59.173 1.103.46 1.513.84.41.38.71.846.88 1.356.17.51.21 1.054.12 1.583-.09.528-.32 1.02-.67 1.425-.35.405-.81.71-1.33.884-1.04.33-2.15.14-3.01-.51v6.77c0 2.49-2.01 4.5-4.5 4.5s-4.5-2.01-4.5-4.5 2.01-4.5 4.5-4.5c.32 0 .63.04.93.12v-1.74c-.3-.07-.6-.12-.93-.12-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3v-6.93c.98.99 2.29 1.52 3.65 1.43.32-.01.64-.06.95-.15v.02c.02.01.05.01.07.01.02 0 .04 0 .06-.01v-.01c.46-.12.88-.34 1.23-.64.35-.3.64-.67.84-1.09.2-.42.3-.87.3-1.34V2h-3.99z" />
+  <svg
+    {...props}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    {/* シアンのずれ */}
+    <path
+      d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
+      fill="#00F2EA"
+      transform="translate(-0.5,-0.5)"
+    />
+
+    {/* ピンクのずれ */}
+    <path
+      d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
+      fill="#FF0050"
+      transform="translate(0.5,0.5)"
+    />
+
+    {/* メイン黒 */}
+    <path
+      d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
+      fill="#000000"
+    />
   </svg>
 );
 
 const SpotifyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    {/* circle uses currentColor so style={{ color: link.color }} paints the background */}
-    <circle cx="12" cy="12" r="12" fill="currentColor" />
-    {/* the waves are white to match the Spotify logo */}
-    <path fill="#fff" d="M17.2 16.2c-1.4 0-2.8-.4-4-1.1-.4-.2-.9 0-1.1.4s0 .9.4 1.1c1.5.8 3.2 1.2 4.7 1.2 1.1 0 1.8-.8 1.8-1.8 0-1.1-.7-1.8-1.8-1.8zM18.5 12.9c-1.9-1.1-4.7-1.4-6.9-.8-.5.2-.8.8-.6 1.3.2.5.8.8 1.3.6 1.8-.5 3.8-.3 5.3.8.4.3 1 .2 1.3-.2.3-.5.1-1.1-.4-1.7zM19.1 9.3c-2.4-1.5-6.2-1.6-8.6-.9-.6.2-.9.9-.6 1.5.2.6.9.9 1.5.6 1.8-.6 4.6-.5 6.2.9.5.3 1.2.1 1.4-.4.2-.6 0-1.2-.3-1.7z" />
+  <svg
+    {...props}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 6.63 5.37 12 12 12s12-5.37 12-12C24 5.37 18.63 0 12 0zm5.48 17.32a.75.75 0 0 1-1.03.25c-2.83-1.73-6.4-2.12-10.6-1.15a.75.75 0 0 1-.33-1.46c4.58-1.05 8.49-.61 11.61 1.28.36.22.48.68.25 1.08zm1.46-3.25a.94.94 0 0 1-1.28.31c-3.24-1.97-8.18-2.54-11.98-1.38a.94.94 0 0 1-.54-1.8c4.26-1.28 9.65-.65 13.33 1.59.45.28.59.86.32 1.28zm.13-3.4c-3.67-2.18-9.75-2.38-13.29-1.29a1.13 1.13 0 0 1-.68-2.16c4.01-1.27 10.75-1.04 14.96 1.47a1.13 1.13 0 1 1-1 1.98z" />
   </svg>
 );
 
@@ -106,24 +125,10 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
               className="text-white transition-opacity hover:opacity-70"
             >
               <span className={spanClass}>
-                {(link.name === 'TikTok' || link.name === 'Spotify') ? (
-                  // prefer local downloaded PNG (falls back to inline SVG if missing)
-                  <img
-                    src={link.name === 'TikTok' ? `${base}assets/icons/tiktok.png` : `${base}assets/icons/spotify.png`}
-                    alt={link.name}
-                    className={sizeClass}
-                    style={{ display: 'block' }}
-                    onError={(e) => {
-                      // if image missing or fails, replace with the inline Icon component
-                      const target = e.currentTarget as HTMLImageElement;
-                      target.replaceWith(
-                        React.createElement(Icon as any, { className: sizeClass, style: { color: link.color, display: 'block' } })
-                      );
-                    }}
-                  />
-                ) : (
+                {
+                  // Render inline SVG icons for Spotify and TikTok to ensure they display reliably on mobile.
                   <Icon className={sizeClass} style={{ color: link.color, display: 'block' }} />
-                )}
+                }
               </span>
             </a>
           );
