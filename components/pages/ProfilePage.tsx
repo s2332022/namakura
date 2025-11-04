@@ -21,22 +21,22 @@ const ProfilePage: React.FC = () => {
           <li>
             <strong>佐藤翔太</strong>
             {' '}- ボーカル／ギター {' '}
-            <a href="https://www.instagram.com/nmkrmtr_vo" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@nmkrmtr_vo</a>
+            <a href="https://www.instagram.com/nmkrmtr_vo" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@nmkrmtr_vo</a>
           </li>
           <li>
             <strong>きの</strong>
             {' '}- ギター／コーラス {' '}
-            <a href="https://www.instagram.com/kuchiatama4kaku" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@kuchiatama4kaku</a>
+            <a href="https://www.instagram.com/kuchiatama4kaku" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@kuchiatama4kaku</a>
           </li>
           <li>
             <strong>伊藤元陽</strong>
             {' '}- ベース {' '}
-            <a href="https://www.instagram.com/nmkrmtr_ba" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@nmkrmtr_ba</a>
+            <a href="https://www.instagram.com/nmkrmtr_ba" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@nmkrmtr_ba</a>
           </li>
           <li>
             <strong>大谷優生</strong>
             {' '}- ドラム {' '}
-            <a href="https://www.instagram.com/ohtani_ppk" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@ohtani_ppk</a>
+            <a href="https://www.instagram.com/ohtani_ppk" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@ohtani_ppk</a>
           </li>
         </ul>
 
