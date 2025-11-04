@@ -90,7 +90,7 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
       // Use fixed so icons are positioned relative to viewport and won't be clipped by ancestor overflow
       // Small screens: bottom-right horizontal. Desktop: right-center vertical (like reference site).
       <div
-        className={`fixed bottom-16 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:top-1/2 md:translate-x-0 md:transform md:-translate-y-1/2 transition-opacity duration-300 ${
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:top-1/2 md:translate-x-0 md:transform md:-translate-y-1/2 transition-opacity duration-300 ${
           isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
         style={{ zIndex: 15 }}
