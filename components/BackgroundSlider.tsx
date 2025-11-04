@@ -80,7 +80,7 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           setCurrentIndex(next);
         };
       }
-    }, 7000); // Change image every 7 seconds
+  }, 9000); // Change image every 9 seconds for a more relaxed, smoother pace
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,11 +104,14 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           key={image + index}
           src={image}
           alt={`バンド なまくらメトロ イメージ ${index + 1}`}
-          className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2000ms] ease-in-out
-            ${index === currentIndex ? 'opacity-100 animate-ken-burns' : 'opacity-0'}`}
+          className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2800ms]
+            ${index === currentIndex ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
           style={{
-            // keep images above the fallback bg
-            zIndex: 0,
+            transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)',
+            // keep images above the fallback bg; ensure current image sits on top
+            zIndex: index === currentIndex ? 2 : 1,
+            pointerEvents: 'none',
+            willChange: 'opacity, transform',
           }}
         />
       ))}
@@ -123,7 +126,9 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           }
         }
         .animate-ken-burns {
-          animation: ken-burns 15s ease-in-out infinite alternate-reverse;
+          /* Run Ken Burns continuously for each image so incoming images are
+             already mid-animation when they fade in (smoother visual handoff). */
+          animation: ken-burns 18s cubic-bezier(0.4,0,0.2,1) infinite alternate-reverse;
         }
       `}</style>
     </div>

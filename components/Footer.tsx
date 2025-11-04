@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
     <footer className="site-footer bg-black/60">
       <div className="container">
         <div className="mb-4">
-          <p className="text-sm">なまくらメトロ — Official site</p>
+          <p className="text-sm">なまくらメトロ — 非Official site</p>
         </div>
         <div className="mb-4">
           <a href="#" className="text-sm text-white/70 mr-4">Privacy</a>

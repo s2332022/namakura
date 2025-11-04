@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ isMenuOpen, onMenuToggle }) => {
       </div>
 
       <div className="flex-0 logo text-center">
-        <a href="#top" onClick={handleLogoClick} className="logo inline-block text-white no-underline">なまくらメトロ</a>
+        <a href="#top" onClick={handleLogoClick} className="logo inline-block text-white no-underline">なまくらメトロ（仮</a>
       </div>
 
       <div className="flex-1 flex items-center justify-end">

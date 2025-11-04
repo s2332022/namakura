@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Header from './components/Header';
 import BackgroundSlider from './components/BackgroundSlider';
 import SocialLinks from './components/SocialLinks';
@@ -16,13 +16,18 @@ import Footer from './components/Footer';
 // Files in `public/` are served from the site root, so the path is `/assets/background.jpg`.
 // Use import.meta.env.BASE_URL so paths are correct when deployed under a repo subpath (GitHub Pages).
 const base = (import.meta as any).env?.BASE_URL ?? '/';
-const images = [
-  `${base}assets/background.jpg`, // local photo (preferred) — put your photo at public/assets/background.jpg
-  `${base}assets/background.svg`, // fallback placeholder SVG
-  'https://images.unsplash.com/photo-1516245834210-c4c1427873AB?q=80&w=2070&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1499972935497-21946084a914?q=80&w=2070&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1511889498262-5a94773a4353?q=80&w=2070&auto=format&fit=crop',
-];
+
+// Default images (local photo + svg fallback). We'll dynamically load
+// any files discovered in `public/assets/backgrounds/` (generated to
+// `src/generated/backgrounds.ts`) and insert them between these two.
+const defaultLocal = `${base}assets/background.jpg`;
+const defaultFallback = `${base}assets/background.svg`;
+
+const initialImages = [defaultLocal, defaultFallback];
+
+// Images will be managed in component state so we can dynamically load a
+// generated manifest (`src/generated/backgrounds.ts`) at runtime and insert
+// discovered files between the defaultLocal and defaultFallback images.
 
 const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,6 +38,30 @@ const App: React.FC = () => {
   
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
+  }, []);
+
+  // Images state: start with defaults, then try to load generated manifest
+  // from `src/generated/backgrounds.ts` which is produced by the generator
+  // script (scripts/generate-backgrounds.js). Files are mapped to
+  // `${base}assets/backgrounds/<filename>` so they work on GitHub Pages.
+  const [images, setImages] = useState<string[]>(initialImages);
+
+  useEffect(() => {
+    let mounted = true;
+  import('./src/generated/backgrounds')
+      .then((mod) => {
+        const list = (mod && (mod.default || mod)) as string[] | undefined;
+        if (!list || !list.length) return;
+        const mapped = list.map((f) => `${base}assets/backgrounds/${f}`);
+        if (mounted) setImages([defaultLocal, ...mapped, defaultFallback]);
+      })
+      .catch(() => {
+        // No generated file or failed to load; keep defaults.
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
