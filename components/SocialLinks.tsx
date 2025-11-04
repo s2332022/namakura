@@ -31,21 +31,21 @@ const TikTokIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     {/* シアンのずれ */}
     <path
       d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
-      fill="#00F2EA"
+      fill="currentColor"
       transform="translate(-0.5,-0.5)"
     />
 
     {/* ピンクのずれ */}
     <path
       d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
-      fill="#FF0050"
+      fill="currentColor"
       transform="translate(0.5,0.5)"
     />
 
     {/* メイン黒 */}
     <path
       d="M12.5 2h2.47c.22 1.46.97 2.7 2.18 3.53 1.03.7 2.2 1.05 3.35 1.03v2.58a6.95 6.95 0 0 1-3.47-.86 6.98 6.98 0 0 1-2.06-1.63v6.91c0 3.17-2.57 5.73-5.73 5.73A5.73 5.73 0 0 1 3.5 13.6c0-3.17 2.57-5.73 5.73-5.73.36 0 .72.03 1.07.1v2.74a3.24 3.24 0 0 0-1.07-.19 3.03 3.03 0 0 0 0 6.06 3.03 3.03 0 0 0 3.03-3.03V2z"
-      fill="#000000"
+      fill="currentColor"
     />
   </svg>
 );
@@ -124,12 +124,13 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
               }}
               className="text-white transition-opacity hover:opacity-70"
             >
-              <span className={spanClass}>
-                {
-                  // Render inline SVG icons for Spotify and TikTok to ensure they display reliably on mobile.
-                  <Icon className={sizeClass} style={{ color: link.color, display: 'block' }} />
-                }
-              </span>
+                  <span className={spanClass}>
+                    {
+                      // Render inline SVG icons in monochrome: SVGs use currentColor so they inherit
+                      // the parent's text color (anchor already has `text-white`).
+                      <Icon className={`${sizeClass} block`} />
+                    }
+                  </span>
             </a>
           );
         })}
