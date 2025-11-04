@@ -1,15 +1,17 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import BackgroundSlider from './components/BackgroundSlider';
-import SocialLinks from './components/SocialLinks';
-import NewsTicker from './components/NewsTicker';
-import MenuOverlay from './components/MenuOverlay';
-import ProfilePage from './components/pages/ProfilePage';
-import MusicPage from './components/pages/MusicPage';
-import LivePage from './components/pages/LivePage';
-import NewsPage from './components/pages/NewsPage';
-import ContactPage from './components/pages/ContactPage';
-import Footer from './components/Footer';
+
+// Lazy-load heavier or below-the-fold components to reduce initial bundle size.
+const SocialLinks = lazy(() => import('./components/SocialLinks'));
+const NewsTicker = lazy(() => import('./components/NewsTicker'));
+const MenuOverlay = lazy(() => import('./components/MenuOverlay'));
+const ProfilePage = lazy(() => import('./components/pages/ProfilePage'));
+const MusicPage = lazy(() => import('./components/pages/MusicPage'));
+const LivePage = lazy(() => import('./components/pages/LivePage'));
+const NewsPage = lazy(() => import('./components/pages/NewsPage'));
+const ContactPage = lazy(() => import('./components/pages/ContactPage'));
+const Footer = lazy(() => import('./components/Footer'));
 
 // Background images for the slider.
 // If you want to use a local photo, put it in `public/assets/background.jpg`.
@@ -69,7 +71,9 @@ const App: React.FC = () => {
       <div id="top"></div>
       <BackgroundSlider images={images} />
       <Header isMenuOpen={isMenuOpen} onMenuToggle={toggleMenu} />
-      <MenuOverlay isOpen={isMenuOpen} onLinkClick={closeMenu} />
+      <Suspense fallback={null}>
+        <MenuOverlay isOpen={isMenuOpen} onLinkClick={closeMenu} />
+      </Suspense>
       
       <main className="relative z-10">
         {/* Hero Section */}
@@ -82,17 +86,27 @@ const App: React.FC = () => {
 
         {/* Content Sections */}
         <div className="bg-black bg-opacity-60 backdrop-blur-md">
-            <section id="profile" className="snap-section"><ProfilePage /></section>
-            <section id="music" className="snap-section"><MusicPage /></section>
-            <section id="live" className="snap-section"><LivePage /></section>
-            <section id="news" className="snap-section"><NewsPage /></section>
-            <section id="contact" className="snap-section"><ContactPage /></section>
+            <section id="profile" className="snap-section">
+              <Suspense fallback={null}><ProfilePage /></Suspense>
+            </section>
+            <section id="music" className="snap-section">
+              <Suspense fallback={null}><MusicPage /></Suspense>
+            </section>
+            <section id="live" className="snap-section">
+              <Suspense fallback={null}><LivePage /></Suspense>
+            </section>
+            <section id="news" className="snap-section">
+              <Suspense fallback={null}><NewsPage /></Suspense>
+            </section>
+            <section id="contact" className="snap-section">
+              <Suspense fallback={null}><ContactPage /></Suspense>
+            </section>
         </div>
       </main>
 
-  <SocialLinks isMenuOpen={isMenuOpen} />
-      <NewsTicker />
-      <Footer />
+  <Suspense fallback={null}><SocialLinks isMenuOpen={isMenuOpen} /></Suspense>
+    <Suspense fallback={null}><NewsTicker /></Suspense>
+    <Suspense fallback={null}><Footer /></Suspense>
     </div>
   );
 };
