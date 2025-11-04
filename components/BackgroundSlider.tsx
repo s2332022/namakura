@@ -61,6 +61,13 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
       imgs.push(img);
     });
 
+    // After starting preload, ensure currentIndex points to the first already-loaded image
+    // (helps when we marked SVG/data images as loaded above).
+    const firstLoadedTimeout = setTimeout(() => {
+      const firstLoaded = loadedRef.current.findIndex(Boolean);
+      if (firstLoaded >= 0) setCurrentIndex(firstLoaded);
+    }, 0);
+
     return () => {
       // allow GC of Image objects
       imgs.forEach((img) => {
@@ -69,16 +76,11 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
         // @ts-ignore
         img.onerror = null;
       });
+      clearTimeout(firstLoadedTimeout);
     };
-      // After starting preload, ensure currentIndex points to the first already-loaded image
-      // (helps when we marked SVG/data images as loaded above).
-      setTimeout(() => {
-        const firstLoaded = loadedRef.current.findIndex(Boolean);
-        if (firstLoaded >= 0) setCurrentIndex(firstLoaded);
-      }, 0);
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [images.join('|')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images.join('|')]);
 
   // only advance when the next image is loaded (to avoid blank flashes)
   useEffect(() => {
