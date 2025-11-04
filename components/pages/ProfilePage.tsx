@@ -13,15 +13,31 @@ const ProfilePage: React.FC = () => {
         <h3 className="text-xl font-semibold">略歴</h3>
         <p>
           2019年ごろに前身となる活動が始まり、大学の軽音楽サークルでメンバーが出会いながら活動を経て、
-          2023年3月8日に渋谷CYCLONEでなまくらメトロとして初のライブを行い、以降本格的に活動を開始しました。
+          2023年3月8日に渋谷CYCLONEでなまくらメトロとして初のライブを行い、以降本格的に活動を開始した。
         </p>
 
         <h3 className="text-xl font-semibold">メンバー</h3>
         <ul className="list-disc list-inside">
-          <li><strong>佐藤翔太</strong> — ボーカル／ギター（楽曲で作詞・作曲を手掛けることもある）</li>
-          <li><strong>きの</strong> — ギター／コーラス（多くの楽曲制作に携わる）</li>
-          <li><strong>伊藤元陽</strong> — ベース</li>
-          <li><strong>大谷優生</strong> — ドラム（一部楽曲で作詞を担当）</li>
+          <li>
+            <strong>佐藤翔太</strong>
+            {' '}- ボーカル／ギター {' '}
+            <a href="https://www.instagram.com/nmkrmtr_vo" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@nmkrmtr_vo</a>
+          </li>
+          <li>
+            <strong>きの</strong>
+            {' '}- ギター／コーラス {' '}
+            <a href="https://www.instagram.com/kuchiatama4kaku" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@kuchiatama4kaku</a>
+          </li>
+          <li>
+            <strong>伊藤元陽</strong>
+            {' '}- ベース {' '}
+            <a href="https://www.instagram.com/nmkrmtr_ba" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@nmkrmtr_ba</a>
+          </li>
+          <li>
+            <strong>大谷優生</strong>
+            {' '}- ドラム {' '}
+            <a href="https://www.instagram.com/ohtani_ppk" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 ml-2">@ohtani_ppk</a>
+          </li>
         </ul>
 
         <h3 className="text-xl font-semibold">ディスコグラフィ（抜粋）</h3>
