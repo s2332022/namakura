@@ -40,6 +40,8 @@ const App: React.FC = () => {
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
   }, []);
+
+  
   
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -68,6 +70,64 @@ const App: React.FC = () => {
       mounted = false;
     };
   }, []);
+
+  // Aggressively preload background images when the `images` array updates.
+  // We limit eager preloads to the first few images to avoid overwhelming
+  // low-end devices while still improving the chance the hero/photo is ready
+  // on initial mobile open.
+  useEffect(() => {
+    if (!images || !images.length) return;
+    const maxEager = Math.min(images.length, 6); // preload up to 6 images eagerly
+    const preloadLinks: HTMLLinkElement[] = [];
+    const imgs: HTMLImageElement[] = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const src = images[i];
+      // For the first few images, add a <link rel="preload"> hint which some
+      // browsers treat with higher priority.
+      if (i < 3) {
+        try {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = src;
+          // @ts-ignore some browsers support fetchpriority on link
+          try { (link as any).fetchPriority = 'high'; } catch {};
+          document.head.appendChild(link);
+          preloadLinks.push(link);
+        } catch {}
+      }
+
+      // Create Image objects to ensure they are fetched and decoded.
+      try {
+        const img = new Image();
+        img.loading = i < maxEager ? 'eager' : 'lazy';
+        try { img.setAttribute('fetchpriority', i < 3 ? 'high' : 'low'); } catch {}
+        img.src = src;
+        const markLoaded = () => {
+          // noop: we just want it in cache; BackgroundSlider tracks loads itself
+        };
+        if ((img as any).decode && typeof (img as any).decode === 'function') {
+          (img as any).decode().then(markLoaded).catch(() => { img.onload = markLoaded; img.onerror = markLoaded; });
+        } else {
+          img.onload = markLoaded;
+          img.onerror = markLoaded;
+        }
+        imgs.push(img);
+      } catch {}
+    }
+
+    return () => {
+      // cleanup preload links and image handlers
+      preloadLinks.forEach((l) => l.parentNode && l.parentNode.removeChild(l));
+      imgs.forEach((img) => {
+        // @ts-ignore
+        img.onload = null;
+        // @ts-ignore
+        img.onerror = null;
+      });
+    };
+  }, [images.join('|')]);
 
   // Splash lifecycle: wait for window 'load' (all resources) plus a small min delay,
   // then fade out the splash. Keeps a minimum splash duration for smoothness.
