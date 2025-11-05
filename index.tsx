@@ -24,6 +24,17 @@ window.addEventListener('scroll', () => {
   requestAnimationFrame(setHeaderScrolled);
 });
 
+// Update a CSS variable with the current scroll Y (px) so components can
+// implement lightweight parallax effects using CSS. Use rAF to avoid jank.
+// Update a CSS variable with the current scroll Y (px) so components can
+// implement lightweight parallax effects using CSS. Use rAF to avoid jank.
+function updateScrollVar() {
+  const y = window.scrollY || window.pageYOffset || 0;
+  document.documentElement.style.setProperty('--scroll-y', `${y}px`);
+}
+updateScrollVar();
+window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
