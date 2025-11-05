@@ -35,6 +35,32 @@ function updateScrollVar() {
 updateScrollVar();
 window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
 
+// Preload the main local background image with high priority so mobile
+// opening the URL shows the photo quickly. Use the same BASE_URL logic
+// as App so the path works under subpaths.
+(() => {
+  try {
+    const base = (import.meta as any).env?.BASE_URL ?? '/';
+    const defaultLocal = `${base}assets/background.jpg`;
+    const img = new Image();
+    // Hint the browser this is high-priority; some browsers support fetchPriority
+    // and the `loading` attribute. This helps mobile show the hero background faster.
+    try {
+      img.setAttribute('fetchpriority', 'high');
+    } catch {}
+    img.loading = 'eager';
+    img.src = defaultLocal;
+    // If decode() is supported, wait for decode so pixels are ready earlier.
+    if ((img as any).decode) {
+      (img as any).decode().catch(() => {}).then(() => {
+        // nothing to do; having the image in cache is useful for BackgroundSlider
+      });
+    }
+  } catch (e) {
+    // no-op on any failures; it's an optimization only
+  }
+})();
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");

@@ -21,7 +21,7 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
     setLoaded(images.map(() => false));
 
     const imgs: HTMLImageElement[] = [];
-    images.forEach((src, i) => {
+  images.forEach((src, i) => {
       // skip if already marked loaded
       if (loadedRef.current[i]) return;
       // If the image is an inline/data URL or an SVG, treat it as already available
@@ -36,20 +36,12 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
         return;
       }
       const img = new Image();
+      // Try to hint browsers to prioritize this image where supported
+      try { img.setAttribute('fetchpriority', 'high'); } catch {}
+      img.loading = 'eager';
       img.src = src;
-      img.onload = () => {
-        loadedRef.current[i] = true;
-        setLoaded((prev) => {
-          const next = [...prev];
-          next[i] = true;
-          return next;
-        });
-        // If the currently displayed image isn't loaded yet, show this one
-        // as soon as it becomes available so the UI doesn't stay blank.
-        setCurrentIndex((cur) => (loadedRef.current[cur] ? cur : i));
-      };
-      img.onerror = () => {
-        // mark as loaded to avoid blocking rotation forever
+
+      const markLoaded = () => {
         loadedRef.current[i] = true;
         setLoaded((prev) => {
           const next = [...prev];
@@ -58,6 +50,19 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
         });
         setCurrentIndex((cur) => (loadedRef.current[cur] ? cur : i));
       };
+
+      // Prefer decode() which ensures pixels are ready for painting.
+      const decoder = (img as any).decode;
+      if (decoder && typeof decoder === 'function') {
+        (img as any).decode().then(markLoaded).catch(() => {
+          // fallback to onload if decode fails
+          img.onload = markLoaded;
+          img.onerror = markLoaded;
+        });
+      } else {
+        img.onload = markLoaded;
+        img.onerror = markLoaded;
+      }
       imgs.push(img);
     });
 
@@ -122,7 +127,13 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
   }, [currentIndex, images]);
 
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden">
+    // Apply a subtle parallax by translating the whole background based on
+    // the CSS variable `--scroll-y` (set in `index.tsx`). The multiplier is
+    // intentionally small so the background moves slower than the page content.
+    <div
+      className="absolute inset-0 z-0 overflow-hidden"
+      style={{ transform: 'translate3d(0, calc(var(--scroll-y, 0px) * -0.06), 0)' }}
+    >
       {/* fallback background so screen never goes fully blank */}
       <div
         className="absolute inset-0 bg-black"
