@@ -148,23 +148,63 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
         aria-hidden
       />
 
-      {images.map((image, index) => (
-        <img
-          key={image + index}
-          src={image}
-          alt={`バンド なまくらメトロ イメージ ${index + 1}`}
-          // Only show an image when it's both the current index and has finished loading.
-          className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2800ms]
-            ${index === currentIndex && loaded[index] ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
-          style={{
-            transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)',
-            // keep images above the fallback bg; ensure current image sits on top
-            zIndex: index === currentIndex && loaded[index] ? 2 : 1,
-            pointerEvents: 'none',
-            willChange: 'opacity, transform',
-          }}
-        />
-      ))}
+      {images.map((image, index) => {
+        // derive a low-res LQIP filename convention: insert `.lqip` before the
+        // extension (e.g. background.jpg -> background.lqip.jpg). If such a file
+        // exists in `public/assets/backgrounds/` it will be used as the blurred placeholder.
+        const lqip = (() => {
+          try {
+            const url = new URL(image, location.href);
+            const parts = url.pathname.split('/');
+            const filename = parts.pop() || '';
+            const dot = filename.lastIndexOf('.');
+            if (dot <= 0) return '';
+            const name = filename.slice(0, dot);
+            const ext = filename.slice(dot);
+            parts.push(`${name}.lqip${ext}`);
+            return `${url.origin}${parts.join('/')}`;
+          } catch {
+            return '';
+          }
+        })();
+
+        return (
+          <React.Fragment key={image + index}>
+            {/* LQIP low-res blurred placeholder (if available) */}
+            {lqip ? (
+              <img
+                src={lqip}
+                aria-hidden
+                className={`absolute w-full h-full object-cover transition-opacity duration-700 ease-out
+                  ${index === currentIndex && !loaded[index] ? 'opacity-100' : 'opacity-0'}`}
+                style={{
+                  filter: 'blur(18px) saturate(0.7)',
+                  transform: 'scale(1.03)',
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                }}
+                onError={() => { /* fail silently if LQIP missing */ }}
+              />
+            ) : null}
+
+            {/* full-resolution image */}
+            <img
+              src={image}
+              alt={`バンド なまくらメトロ イメージ ${index + 1}`}
+              // Only show an image when it's both the current index and has finished loading.
+              className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2800ms]
+                ${index === currentIndex && loaded[index] ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
+              style={{
+                transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)',
+                // keep images above the fallback bg; ensure current image sits on top
+                zIndex: index === currentIndex && loaded[index] ? 2 : 1,
+                pointerEvents: 'none',
+                willChange: 'opacity, transform',
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
       <div className="absolute inset-0 bg-black/30" />
       <style>{`
         @keyframes ken-burns {
