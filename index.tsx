@@ -35,6 +35,56 @@ function updateScrollVar() {
 updateScrollVar();
 window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
 
+// Snap-to-nearest behavior: detect when scrolling stops and programmatically
+// scroll to the nearest `.snap-section`. This helps on mobile where momentum
+// scrolling can stop between snap points in some browsers.
+(() => {
+  let snapTimer: number | null = null;
+  const headerHeight = () => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '88px';
+    return parseInt(v, 10) || 88;
+  };
+
+  function snapToNearest() {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('.snap-section'));
+    if (!sections.length) return;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const pad = headerHeight();
+    const liftRaw = getComputedStyle(document.documentElement).getPropertyValue('--snap-lift') || '0px';
+    const lift = parseInt(liftRaw, 10) || 0;
+    let closest: HTMLElement | null = null;
+    let minDist = Infinity;
+    sections.forEach((s) => {
+      const rect = s.getBoundingClientRect();
+      // compute distance from top of viewport (account for header)
+      const top = rect.top + scrollY - pad + lift;
+      const dist = Math.abs(top - scrollY);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = s;
+      }
+    });
+    if (closest) {
+      const targetTop = closest.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - pad + lift;
+      window.scrollTo({ top: Math.max(0, Math.round(targetTop)), behavior: 'smooth' });
+    }
+  }
+
+  function onScroll() {
+    if (snapTimer) window.clearTimeout(snapTimer);
+    // wait 120ms after last scroll event to consider scrolling finished
+    snapTimer = window.setTimeout(() => {
+      snapTimer = null;
+      snapToNearest();
+    }, 120) as unknown as number;
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // also catch touchend/wheel for immediate snap after gesture end
+  window.addEventListener('touchend', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 80) as unknown as number; }, { passive: true });
+  window.addEventListener('wheel', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 80) as unknown as number; }, { passive: true });
+})();
+
 // Preload the main local background image with high priority so mobile
 // opening the URL shows the photo quickly. Use the same BASE_URL logic
 // as App so the path works under subpaths.

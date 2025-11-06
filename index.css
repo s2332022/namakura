@@ -6,7 +6,7 @@
   --accent:#FFD166; /* soft accent */
   --header-height: 88px; /* used by scroll-padding and snap calculations; mobile override below */
   --snap-offset: 0px; /* visual offset used in padding/min-height calculations */
-  --snap-lift: -150px; /* stronger negative to pull snapped content further upward */
+  --snap-lift: -100px; /* small negative lift to raise snapped content slightly */
 }
 
 /* Splash screen and fade transitions */
@@ -185,4 +185,28 @@ html, body, #root {
   /* Desktop: keep hero big */
   .site-hero { min-height: 86vh }
 }
+
+/* Carousel styles */
+.carousel { position: relative; padding: 2rem 0; }
+.carousel-viewport { overflow: hidden; }
+.carousel-track { display: flex; align-items: stretch; will-change: transform; }
+.carousel-slide { flex: 0 0 auto; min-width: 240px; margin-right: 18px; display:flex; flex-direction:column; align-items:center }
+.carousel-image { width: 100%; height: 260px; object-fit:cover; border-radius:10px; box-shadow:0 12px 36px rgba(0,0,0,0.6); display:block; transition: transform 220ms ease }
+.carousel-click-area{ background:transparent;border:0;padding:0;cursor:pointer }
+.carousel-slide:hover .carousel-image { transform: scale(1.03) }
+.carousel-caption { margin-top:10px; text-align:center }
+.carousel-title { font-weight:800; font-size:1rem; color:#fff }
+.carousel-link { font-size:0.8rem; color:var(--muted); display:inline-block; margin-top:6px }
+.carousel-control { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; width:52px; height:52px; border-radius:999px; display:flex; align-items:center; justify-content:center; cursor:pointer; backdrop-filter: blur(6px); }
+.carousel-control.prev { left:12px }
+.carousel-control.next { right:12px }
+.carousel-dots { display:flex; gap:8px; justify-content:center; margin-top:14px }
+.carousel-dot { width:10px; height:10px; border-radius:999px; background:rgba(255,255,255,0.22); border:none; cursor:pointer }
+.carousel-dot.active { background:rgba(255,255,255,0.95); transform: scale(1.1) }
+
+@media (max-width: 767px) {
+  .carousel-slide { min-width: 160px; margin-right:12px }
+  .carousel-image { height:160px }
+}
+
 
