@@ -5,6 +5,8 @@
   --muted:#9CA3AF; /* gray-400 */
   --accent:#FFD166; /* soft accent */
   --header-height: 88px; /* used by scroll-padding and snap calculations; mobile override below */
+  --snap-offset: 0px; /* visual offset used in padding/min-height calculations */
+  --snap-lift: -150px; /* stronger negative to pull snapped content further upward */
 }
 
 /* Splash screen and fade transitions */
@@ -123,9 +125,10 @@ html, body, #root {
 
 /* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
 html, body {
-  /* Use proximity to reduce forced snaps; keep overscroll contained and
-     ensure touch pan behavior is vertical-only for better snap consistency. */
-  scroll-snap-type: y proximity;
+  /* Use mandatory snapping so the viewport always settles on a snap point.
+     'mandatory' forces snapping behavior more aggressively than 'proximity',
+     which helps avoid landing mid-section on mobile momentum scrolls. */
+  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
@@ -133,9 +136,9 @@ html, body {
 
 .snap-section {
   scroll-snap-align: start;
-  /* subtract header height so sections align correctly under the fixed header
-     and avoid accidental blank space at the top when snapping. */
-  min-height: calc(var(--vh, 1vh) * 100 - var(--header-height));
+  /* subtract header height + snap offset so sections align slightly lower
+     under the fixed header (prevents content feeling too high). */
+  min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));
   display: block;
   /* prefer to stop at each snap point to avoid skipping */
   scroll-snap-stop: always;
@@ -143,9 +146,14 @@ html, body {
 
 /* account for fixed header when snapping */
 html, body, #root {
-  /* account for fixed header and possible bottom safe area on mobile */
-  scroll-padding-top: var(--header-height);
-  scroll-padding-bottom: calc(var(--header-height) + env(safe-area-inset-bottom, 0px));
+  /* account for fixed header and possible bottom safe area on mobile
+     include an extra --snap-offset so snapped sections appear slightly lower
+     (user requested to "lower" the snap target). */
+  /* Pull snapped sections slightly higher by subtracting a small constant
+     from the padding so the section title sits closer to the top of the
+     viewport (but still below the header). Adjust this constant to taste. */
+  scroll-padding-top: calc(var(--header-height) + var(--snap-offset) - 12px);
+  scroll-padding-bottom: calc(var(--header-height) + var(--snap-offset) - 12px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Mobile-specific adjustments */
@@ -163,8 +171,8 @@ html, body, #root {
   .container{padding-left:0.75rem;padding-right:0.75rem}
 
   /* mobile header is shorter: adjust header height variable and snap sizing */
-  :root { --header-height: 64px; }
-  .snap-section{min-height: calc(var(--vh, 1vh) * 100 - var(--header-height));}
+  :root { --header-height: 64px; --snap-offset: 0px; --snap-lift: -100px; }
+  .snap-section{min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));}
 
   /* Footer spacing smaller */
   .site-footer{padding:2rem 1rem}
