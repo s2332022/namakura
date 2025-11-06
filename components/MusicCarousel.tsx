@@ -21,6 +21,7 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [current, setCurrent] = useState(1); // start at 1 because of clones
   const [isTransitioning, setIsTransitioning] = useState(true);
+  const animatingRef = useRef(false);
   const [itemWidth, setItemWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [gap, setGap] = useState(16);
@@ -59,7 +60,10 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
   }, [current, isPaused, autoplayInterval, items.length]);
 
   const goTo = (index: number, withTransition = true) => {
+    // Prevent starting a new transition while one is in-flight when withTransition is true
+    if (withTransition && animatingRef.current) return;
     setIsTransitioning(withTransition);
+    animatingRef.current = withTransition;
     setCurrent(index);
   };
 
@@ -71,6 +75,8 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
     const track = trackRef.current;
     if (!track) return;
     const onTransitionEnd = () => {
+      // clear animating flag when a transform transition finishes
+      animatingRef.current = false;
       // if we moved to the cloned first (index === slides.length-1) jump to 1
       if (current >= slides.length - 1) {
         setIsTransitioning(false);
