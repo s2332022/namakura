@@ -6,7 +6,7 @@
   --accent:#FFD166; /* soft accent */
   --header-height: 88px; /* used by scroll-padding and snap calculations; mobile override below */
   --snap-offset: 0px; /* visual offset used in padding/min-height calculations */
-  --snap-lift: -100px; /* small negative lift to raise snapped content slightly */
+  --snap-lift: -160px; /* stronger negative lift so snapped content appears higher (closer to top) */
 }
 
 /* Splash screen and fade transitions */
@@ -171,7 +171,7 @@ html, body, #root {
   .container{padding-left:0.75rem;padding-right:0.75rem}
 
   /* mobile header is shorter: adjust header height variable and snap sizing */
-  :root { --header-height: 64px; --snap-offset: 0px; --snap-lift: -100px; }
+  :root { --header-height: 64px; --snap-offset: 0px; --snap-lift: -160px; }
   .snap-section{min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));}
 
   /* Footer spacing smaller */
