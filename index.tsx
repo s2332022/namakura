@@ -46,6 +46,10 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
   // track touch Y to detect pull-down at top of page
   let lastTouchY: number | null = null;
   let lastTouchMoveDelta = 0;
+  // prevent rapid back-and-forth snapping: remember when/which section we
+  // last snapped to and ignore snaps that happen too soon afterwards.
+  let lastSnapAt = 0;
+  let lastSnappedIndex: number | null = null;
   const headerHeight = () => {
     const v = getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '88px';
     return parseInt(v, 10) || 88;
@@ -68,7 +72,7 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
   // Only consider sections whose title (h2 inside PageContainer) is at least
     // partially visible in the viewport — this makes snapping trigger when the
     // section title actually appears on screen rather than from a large distance.
-    let closest: HTMLElement | null = null;
+  let closest: HTMLElement | null = null;
     let minDist = Infinity;
     sections.forEach((s) => {
       try {
@@ -103,9 +107,20 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
   // effective snap range). Lower values = easier to snap.
   const SNAP_THRESHOLD = isMobile ? 24 : 32; // px
     if (closest && minDist > SNAP_THRESHOLD) {
+      const targetIndex = sections.indexOf(closest);
+      const now = Date.now();
+      // if we snapped to the same section very recently, ignore to avoid
+      // flip-flopping between two adjacent sections
+      if (lastSnappedIndex !== null && lastSnappedIndex === targetIndex && (now - lastSnapAt) < 700) {
+        return;
+      }
+      // globally throttle snaps to avoid rapid repeated snapping
+      if (now - lastSnapAt < 250) return;
       const targetTop = closest.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - pad + lift;
       // use smooth native scrolling; JS fallback remains gentle
       window.scrollTo({ top: Math.max(0, Math.round(targetTop)), behavior: 'smooth' });
+      lastSnapAt = Date.now();
+      lastSnappedIndex = targetIndex;
     }
   }
 
