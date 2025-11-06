@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 type Release = {
   title: string;
@@ -100,15 +100,40 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
   // logical current item index (0..items.length-1)
   const currentItem = items.length ? ((current - 1) % items.length + items.length) % items.length : 0;
 
-  // Preload a small neighborhood around currentItem (±2) so first/last edge cases are covered
+  // Preload images around the logical current, and also around logical next/prev
+  // This ensures when we transition across the cloned slides (wrap from last->first
+  // or first->last) the next artworks are already loaded and won't pop in.
+  const PRELOAD_RADIUS = 3; // tune this to expand/contract how many neighbors to preload
+  // Compute the eager set using the same logic so we can set `loading="eager"`
+  // on the actual <img> elements before the browser needs them.
+  const eagerSet = useMemo(() => {
+    const set = new Set<string>();
+    if (!items || items.length === 0) return set;
+
+    const addRangeAround = (centerIdx: number) => {
+      for (let k = -PRELOAD_RADIUS; k <= PRELOAD_RADIUS; k++) {
+        const idx = (centerIdx + k + items.length) % items.length;
+        const s = items[idx];
+        if (s && s.artwork) set.add(s.artwork);
+      }
+    };
+
+    addRangeAround(currentItem);
+    if (slides.length > 0) {
+      const nextSlide = (current + 1 + slides.length) % slides.length;
+      const prevSlide = (current - 1 + slides.length) % slides.length;
+      const nextLogical = ((nextSlide - 1) % items.length + items.length) % items.length;
+      const prevLogical = ((prevSlide - 1) % items.length + items.length) % items.length;
+      addRangeAround(nextLogical);
+      addRangeAround(prevLogical);
+    }
+
+    return set;
+  }, [current, currentItem, items, slides]);
+
   useEffect(() => {
     if (!items || items.length === 0) return;
-    const toPreload = new Set<string>();
-    for (let k = -2; k <= 2; k++) {
-      const idx = (currentItem + k + items.length) % items.length;
-      const s = items[idx];
-      if (s && s.artwork) toPreload.add(s.artwork);
-    }
+    const toPreload = eagerSet; // reuse computed set
 
     const loaders: HTMLImageElement[] = [];
     toPreload.forEach((src) => {
@@ -128,7 +153,7 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
     return () => {
       loaders.forEach((img) => { try { img.src = ''; } catch {} });
     };
-  }, [currentItem, items, preloaded]);
+  }, [eagerSet, items, preloaded]);
 
   return (
     <div
@@ -171,7 +196,7 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
                     src={s.artwork}
                     alt={s.title}
                     className="carousel-image"
-                    loading={itemIndex === currentItem ? 'eager' : 'lazy'}
+                    loading={eagerSet.has(s.artwork) ? 'eager' : 'lazy'}
                     width={260}
                     height={260}
                   />
