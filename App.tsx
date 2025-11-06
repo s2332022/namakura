@@ -23,7 +23,7 @@ const base = (import.meta as any).env?.BASE_URL ?? '/';
 // Default images (local photo + svg fallback). We'll dynamically load
 // any files discovered in `public/assets/backgrounds/` (generated to
 // `src/generated/backgrounds.ts`) and insert them between these two.
-const defaultLocal = `${base}assets/background.jpg`;
+const defaultLocal = `${base}assets/backgrounds/background.jpg`;
 const defaultFallback = `${base}assets/background.svg`;
 
 const initialImages = [defaultLocal, defaultFallback];
@@ -132,22 +132,59 @@ const App: React.FC = () => {
   }, [images.join('|')]);
 
   // Splash lifecycle: wait for window 'load' (all resources) plus a small min delay,
-  // then fade out the splash. Keeps a minimum splash duration for smoothness.
+  // Splash lifecycle: wait for either the window 'load' event or for the
+  // primary background image to finish decoding (whichever happens first),
+  // then fade out the splash after a short minimum delay. This avoids the
+  // hero briefly showing blank when the splash is hidden before the image
+  // pixels are ready.
   useEffect(() => {
     let timeout: number | undefined;
+    let loadHandler: any = null;
+    let aborted = false;
+
     function finish() {
       timeout = window.setTimeout(() => setSplashVisible(false), 600);
     }
 
-    if (document.readyState === 'complete') {
-      finish();
-    } else {
-      window.addEventListener('load', finish, { once: true });
-    }
+    // create a promise that resolves when the primary local background has
+    // been decoded or after a short safety timeout
+    const decodePromise = new Promise<void>((resolve) => {
+      try {
+        const img = new Image();
+        img.loading = 'eager';
+        img.src = defaultLocal;
+        const done = () => resolve();
+        if ((img as any).decode && typeof (img as any).decode === 'function') {
+          (img as any).decode().then(done).catch(() => { img.onload = done; img.onerror = done; });
+        } else {
+          img.onload = done;
+          img.onerror = done;
+        }
+  // safety: if decode/onload doesn't fire, resolve after a short cap
+  // so the splash doesn't stay black for several seconds.
+  window.setTimeout(done, 300);
+      } catch {
+        resolve();
+      }
+    });
+
+    const loadPromise = new Promise<void>((resolve) => {
+      loadHandler = () => resolve();
+      if (document.readyState === 'complete') resolve();
+      else window.addEventListener('load', loadHandler, { once: true });
+    });
+
+    // prefer the decode completion but don't wait forever — unblocks when either
+    // the decode or load happens, or a short timeout (300ms) passes.
+    const shortCap = new Promise<void>((res) => setTimeout(res, 300));
+    Promise.race([decodePromise, loadPromise, shortCap]).then(() => {
+      if (!aborted) finish();
+    });
 
     return () => {
+      aborted = true;
       if (timeout) window.clearTimeout(timeout);
-      window.removeEventListener('load', finish as any);
+      if (loadHandler) window.removeEventListener('load', loadHandler as any);
     };
   }, []);
 

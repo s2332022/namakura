@@ -25,6 +25,19 @@
 }
 </script>
 <link rel="stylesheet" href="./index.css">
+    <!-- Preload the primary hero background so the browser fetches it immediately -->
+    <link rel="preload" as="image" href="%BASE_URL%assets/backgrounds/background.jpg">
+    <style>
+      /* Show the hero background immediately on first paint (before React mounts).
+         Using %BASE_URL% ensures correct path when deployed under a subpath. */
+      body {
+        background-image: url('%BASE_URL%assets/backgrounds/background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #000;
+      }
+    </style>
 </head>
   <body class="bg-black">
     <div id="root"></div>
