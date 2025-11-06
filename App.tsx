@@ -101,13 +101,15 @@ const App: React.FC = () => {
       // Create Image objects to ensure they are fetched and decoded.
       try {
         const img = new Image();
-        img.loading = i < maxEager ? 'eager' : 'lazy';
-        try { img.setAttribute('fetchpriority', i < 3 ? 'high' : 'low'); } catch {}
+        // Eagerly load every background so the hero photo is available early.
+        img.loading = 'eager';
+        try { img.setAttribute('fetchpriority', i < 3 ? 'high' : 'auto'); } catch {}
         img.src = src;
         const markLoaded = () => {
           // noop: we just want it in cache; BackgroundSlider tracks loads itself
         };
         if ((img as any).decode && typeof (img as any).decode === 'function') {
+          // start decode so pixels are ready earlier; don't await here to avoid blocking
           (img as any).decode().then(markLoaded).catch(() => { img.onload = markLoaded; img.onerror = markLoaded; });
         } else {
           img.onload = markLoaded;
