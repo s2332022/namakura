@@ -9,21 +9,26 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
   // track which images have finished loading
   const [loaded, setLoaded] = useState<boolean[]>(() => images.map(() => false));
   const loadedRef = useRef<boolean[]>(images.map(() => false));
+  // persistent map of which src strings we've seen loaded before. This
+  // prevents flicker when the `images` prop changes (App may swap in a
+  // generated manifest after mount) — we reuse previously-decoded images.
+  const preloadedMapRef = useRef<Record<string, boolean>>({});
 
   // Vite base so fallback background works when hosted under subpath
   const base = (import.meta as any).env?.BASE_URL ?? '/';
 
   // preload images
   useEffect(() => {
-    // When the images prop changes, reset our loaded tracking so we don't
-    // accidentally show a stale index while new images are being fetched.
-    loadedRef.current = images.map(() => false);
-    setLoaded(images.map(() => false));
+  // When the images prop changes, preserve any images we've already
+  // decoded earlier (by URL) so we don't cause a brief blank state.
+  const initialLoaded = images.map((src) => !!preloadedMapRef.current[src]);
+  loadedRef.current = initialLoaded.slice();
+  setLoaded(initialLoaded.slice());
 
     const imgs: HTMLImageElement[] = [];
   images.forEach((src, i) => {
-      // skip if already marked loaded
-      if (loadedRef.current[i]) return;
+  // skip if already marked loaded
+  if (loadedRef.current[i]) return;
       // If the image is an inline/data URL or an SVG, treat it as already available
       // to avoid a momentary state where no images have loaded yet.
       if (typeof src === 'string' && (src.startsWith('data:') || src.toLowerCase().endsWith('.svg'))) {
@@ -42,6 +47,9 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
       img.src = src;
 
       const markLoaded = () => {
+        // remember that this src has been successfully decoded so future
+        // remounts or prop changes can reuse that knowledge.
+        preloadedMapRef.current[src] = true;
         loadedRef.current[i] = true;
         setLoaded((prev) => {
           const next = [...prev];
@@ -70,7 +78,10 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
     // (helps when we marked SVG/data images as loaded above).
     const firstLoadedTimeout = setTimeout(() => {
       const firstLoaded = loadedRef.current.findIndex(Boolean);
-      if (firstLoaded >= 0) setCurrentIndex(firstLoaded);
+      // only move the currentIndex if the current index isn't already
+      // pointing to a loaded image — this avoids jumps when images list
+      // is updated while the hero is already visible.
+      if (firstLoaded >= 0 && !loadedRef.current[currentIndex]) setCurrentIndex(firstLoaded);
     }, 0);
 
     return () => {
@@ -138,10 +149,15 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
       <div
         className="absolute inset-0 bg-black"
         style={{
-          // Use the last image in the list (usually the fallback SVG) as a background
-          // This is more robust than hard-coding the path and prevents a brief
-          // fully-blank viewport while images are still being marked loaded.
-          backgroundImage: images && images.length ? `url(${images[images.length - 1]})` : `url(${base}assets/background.svg)`,
+          // Use the most likely available photo as the initial background.
+          // The `images` array shape coming from App is typically:
+          // [defaultLocal, ...generatedBackgrounds, defaultFallback].
+          // In some setups `defaultLocal` (images[0]) may be missing on disk
+          // while the generated backgrounds (images[1]) exist. Prefer
+          // images[1] when present, otherwise fall back to images[0] or svg.
+          backgroundImage: images && images.length
+            ? `url(${images[1] ?? images[0]})`
+            : `url(${base}assets/background.svg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
