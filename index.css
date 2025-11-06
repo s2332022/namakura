@@ -5,8 +5,8 @@
   --muted:#9CA3AF; /* gray-400 */
   --accent:#FFD166; /* soft accent */
   --header-height: 88px; /* used by scroll-padding and snap calculations; mobile override below */
-  --snap-offset: 0px; /* visual offset used in padding/min-height calculations */
-  --snap-lift: -160px; /* stronger negative lift so snapped content appears higher (closer to top) */
+  --snap-offset: 8px; /* visual offset used in padding/min-height calculations */
+  --snap-lift: -40px; /* gentle negative lift so snapped headings sit a bit higher without feeling forced */
 }
 
 /* Splash screen and fade transitions */
@@ -125,10 +125,11 @@ html, body, #root {
 
 /* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
 html, body {
-  /* Use mandatory snapping so the viewport always settles on a snap point.
-     'mandatory' forces snapping behavior more aggressively than 'proximity',
-     which helps avoid landing mid-section on mobile momentum scrolls. */
-  scroll-snap-type: y mandatory;
+  /* Use proximity snapping for a gentler, less aggressive feel. This lets
+     the browser decide when to snap during short gestures and avoids
+     forcing an immediate jump every time. We also provide a JS fallback
+     but it will only snap after a slightly longer pause. */
+  scroll-snap-type: y proximity;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
@@ -171,7 +172,7 @@ html, body, #root {
   .container{padding-left:0.75rem;padding-right:0.75rem}
 
   /* mobile header is shorter: adjust header height variable and snap sizing */
-  :root { --header-height: 64px; --snap-offset: 0px; --snap-lift: -160px; }
+  :root { --header-height: 64px; --snap-offset: 8px; --snap-lift: 0px; }
   .snap-section{min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));}
 
   /* Footer spacing smaller */

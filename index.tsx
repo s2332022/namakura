@@ -52,37 +52,59 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
     const pad = headerHeight();
     const liftRaw = getComputedStyle(document.documentElement).getPropertyValue('--snap-lift') || '0px';
     const lift = parseInt(liftRaw, 10) || 0;
+
+    // Only consider sections whose title (h2 inside PageContainer) is at least
+    // partially visible in the viewport — this makes snapping trigger when the
+    // section title actually appears on screen rather than from a large distance.
     let closest: HTMLElement | null = null;
     let minDist = Infinity;
     sections.forEach((s) => {
-      const rect = s.getBoundingClientRect();
-      // compute distance from top of viewport (account for header)
-      const top = rect.top + scrollY - pad + lift;
-      const dist = Math.abs(top - scrollY);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = s;
+      try {
+        const title = s.querySelector('h2');
+        if (title) {
+          const tr = title.getBoundingClientRect();
+          // title is at least partially visible
+          const titleVisible = tr.top < window.innerHeight && tr.bottom > 0;
+          if (!titleVisible) return;
+          // distance from top of viewport (account for header and lift)
+          const top = s.getBoundingClientRect().top + scrollY - pad + lift;
+          const dist = Math.abs(top - scrollY);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = s;
+          }
+        } else {
+          // fallback: if no title, ignore this section for the new heuristic
+          return;
+        }
+      } catch (e) {
+        // ignore any DOM read errors and skip
+        return;
       }
     });
-    if (closest) {
+  // Only snap if the distance is noticeable to avoid small jumps.
+  // Reduced to a very small threshold so snapping is less aggressive.
+  const SNAP_THRESHOLD = 8; // px
+    if (closest && minDist > SNAP_THRESHOLD) {
       const targetTop = closest.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - pad + lift;
+      // use smooth native scrolling; JS fallback remains gentle
       window.scrollTo({ top: Math.max(0, Math.round(targetTop)), behavior: 'smooth' });
     }
   }
 
   function onScroll() {
     if (snapTimer) window.clearTimeout(snapTimer);
-    // wait 120ms after last scroll event to consider scrolling finished
+    // wait a bit longer after scrolling stops to avoid snapping during small gestures
     snapTimer = window.setTimeout(() => {
       snapTimer = null;
       snapToNearest();
-    }, 120) as unknown as number;
+    }, 220) as unknown as number;
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
   // also catch touchend/wheel for immediate snap after gesture end
-  window.addEventListener('touchend', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 80) as unknown as number; }, { passive: true });
-  window.addEventListener('wheel', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 80) as unknown as number; }, { passive: true });
+  window.addEventListener('touchend', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 160) as unknown as number; }, { passive: true });
+  window.addEventListener('wheel', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 160) as unknown as number; }, { passive: true });
 })();
 
 // Preload the main local background image with high priority so mobile
