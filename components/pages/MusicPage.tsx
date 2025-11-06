@@ -7,49 +7,49 @@ const releases = [
     title: 'BRAVMEN',
     type: 'Single',
     year: '2023',
-  artwork: 'https://img-towercloud.eggs.mu/jacketImg/30874-thumbnail.jpg',
+    artwork: '/assets/music/BRAVMEN.webp',
     link: 'https://linkcloud.mu/69ea91ec',
-  spotify: 'https://open.spotify.com/album/32Soe5gRR5Dm9ctS7Dg83D',
+    spotify: 'https://open.spotify.com/album/32Soe5gRR5Dm9ctS7Dg83D',
   },
   {
     title: '煙草',
     type: 'Single',
     year: '2023',
-  artwork: 'https://img-towercloud.eggs.mu/jacketImg/31641-thumbnail.jpg',
+    artwork: '/assets/music/煙草.webp',
     link: 'https://linkcloud.mu/1f487c3c',
-  spotify: 'https://open.spotify.com/album/77jrMmZQ89AZagSHYHIBlw',
+    spotify: 'https://open.spotify.com/album/77jrMmZQ89AZagSHYHIBlw',
   },
   {
     title: '灯籠',
     type: 'Single',
     year: '2024',
-  artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b6/95/d3/b695d331-db5c-1da2-28fc-b2a60f4e354f/41153.jpg/592x592bb.webp',
+    artwork: '/assets/music/灯籠.webp',
     link: 'https://eggs.mu/artist/NamakuraMetro',
-  spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
+    spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
   },
   {
     title: 'Diorama',
     type: 'Single',
     year: '2024',
-  artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/2f/37/27/2f372763-a5fc-3455-31d1-4366dfe2b57e/52053.jpg/592x592bb.webp',
+    artwork: '/assets/music/Diorama.webp',
     link: 'https://eggs.mu/artist/NamakuraMetro',
-  spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
+    spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
   },
   {
     title: 'theatre.V',
     type: 'Single',
     year: '2025',
-  artwork: 'https://img-towercloud.eggs.mu/jacketImg/58273-thumbnail.jpg',
+    artwork: '/assets/music/thatre.V.webp',
     link: 'https://eggs.mu/artist/NamakuraMetro',
-  spotify: 'https://open.spotify.com/album/2Zh2uK4ycfuwHkK38gCM3h',
+    spotify: 'https://open.spotify.com/album/2Zh2uK4ycfuwHkK38gCM3h',
   },
   {
     title: '潔白',
     type: 'Single',
     year: '2025',
-  artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e7/37/12/e73712d7-99c2-e314-9e56-47b1f8ea344e/62652.jpg/592x592bb.webp',
+    artwork: '/assets/music/潔白.webp',
     link: 'https://open.spotify.com/intl-ja/track/3tos8NjjnRljuc7fgEWyx2?si=c69ad3455cfd42c6',
-  spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
+    spotify: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw',
   },
 ];
 
@@ -77,7 +77,7 @@ const MusicPage: React.FC = () => {
             <div id={`release-${idx}`} key={release.title} className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <a href={release.link} target="_blank" rel="noopener noreferrer">
                 {/* Mobile: artwork full width above text. Desktop: fixed square artwork */}
-        <img src={release.artwork} alt={`${release.title} artwork`} className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105" />
+                <img src={release.artwork} alt={`${release.title} artwork`} className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105" />
               </a>
               <div className="text-center md:text-left">
                 <h3 className="text-3xl font-bold">{release.title}</h3>

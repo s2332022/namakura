@@ -18,21 +18,23 @@ type Props = {
 const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSelect }) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
   const [current, setCurrent] = useState(1); // start at 1 because of clones
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [itemWidth, setItemWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [gap, setGap] = useState(16);
   const [isPaused, setIsPaused] = useState(false);
+  const [preloaded, setPreloaded] = useState<Record<string, boolean>>({});
 
   // build slides with clones (last, ...items, first)
   const slides = items.length > 0 ? [items[items.length - 1], ...items, items[0]] : [];
 
   useEffect(() => {
     const measure = () => {
-      const container = containerRef.current;
-      if (!container) return;
-      const first = container.querySelector<HTMLElement>('.carousel-slide');
+      const viewport = viewportRef.current ?? containerRef.current;
+      if (!viewport) return;
+      const first = viewport.querySelector<HTMLElement>('.carousel-slide');
       if (first) {
         const rect = first.getBoundingClientRect();
         const style = window.getComputedStyle(first);
@@ -40,7 +42,7 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
         setItemWidth(rect.width);
         setGap(mr);
       }
-      setContainerWidth(container.clientWidth);
+      setContainerWidth(viewport.clientWidth);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -95,6 +97,39 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
   // dot index (map current to items index)
   const activeDot = ((current - 1) % items.length + items.length) % items.length;
 
+  // logical current item index (0..items.length-1)
+  const currentItem = items.length ? ((current - 1) % items.length + items.length) % items.length : 0;
+
+  // Preload a small neighborhood around currentItem (±2) so first/last edge cases are covered
+  useEffect(() => {
+    if (!items || items.length === 0) return;
+    const toPreload = new Set<string>();
+    for (let k = -2; k <= 2; k++) {
+      const idx = (currentItem + k + items.length) % items.length;
+      const s = items[idx];
+      if (s && s.artwork) toPreload.add(s.artwork);
+    }
+
+    const loaders: HTMLImageElement[] = [];
+    toPreload.forEach((src) => {
+      if (preloaded[src]) return;
+      const img = new Image();
+      try { img.decoding = 'async'; } catch {}
+      try { (img as any).loading = 'eager'; } catch {}
+      img.src = src;
+      loaders.push(img);
+      img.decode?.().then(() => {
+        setPreloaded((p) => ({ ...p, [src]: true }));
+      }).catch(() => {
+        setPreloaded((p) => ({ ...p, [src]: true }));
+      });
+    });
+
+    return () => {
+      loaders.forEach((img) => { try { img.src = ''; } catch {} });
+    };
+  }, [currentItem, items, preloaded]);
+
   return (
     <div
       className="carousel container"
@@ -102,14 +137,13 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
       onMouseLeave={() => setIsPaused(false)}
       ref={containerRef}
     >
-      <div className="carousel-viewport">
+      <div className="carousel-viewport" ref={viewportRef}>
         <div
           className="carousel-track"
           ref={trackRef}
           style={{
             transform: `translate3d(${translateX}px, 0, 0)`,
             transition: isTransitioning ? 'transform 480ms cubic-bezier(.22,.9,.31,1)' : 'none',
-            paddingLeft: offset,
           }}
         >
           {slides.map((s, i) => {
@@ -133,7 +167,14 @@ const MusicCarousel: React.FC<Props> = ({ items, autoplayInterval = 3000, onSele
             return (
               <div className="carousel-slide" key={`${s.title}-${i}`}>
                 <button className="carousel-click-area" onClick={handleClick} aria-label={s.title}>
-                  <img src={s.artwork} alt={s.title} className="carousel-image" />
+                  <img
+                    src={s.artwork}
+                    alt={s.title}
+                    className="carousel-image"
+                    loading={itemIndex === currentItem ? 'eager' : 'lazy'}
+                    width={260}
+                    height={260}
+                  />
                 </button>
                 <div className="carousel-caption">
                   <div className="carousel-title">{s.title}</div>
