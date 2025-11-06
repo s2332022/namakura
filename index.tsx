@@ -40,6 +40,12 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
 // scrolling can stop between snap points in some browsers.
 (() => {
   let snapTimer: number | null = null;
+  // track where the last touch/pointer started so we can avoid stealing
+  // gestures that begin in nested scrollable areas (e.g. releases list)
+  let lastTouchStartedInsideScrollable = false;
+  // track touch Y to detect pull-down at top of page
+  let lastTouchY: number | null = null;
+  let lastTouchMoveDelta = 0;
   const headerHeight = () => {
     const v = getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '88px';
     return parseInt(v, 10) || 88;
@@ -53,7 +59,13 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
     const liftRaw = getComputedStyle(document.documentElement).getPropertyValue('--snap-lift') || '0px';
     const lift = parseInt(liftRaw, 10) || 0;
 
-    // Only consider sections whose title (h2 inside PageContainer) is at least
+  // If the last gesture started inside a nested scrollable element, don't
+  // perform global snapping — the user likely intends to scroll inside that
+  // area (e.g. the releases list). This avoids jumping the page while the
+  // user interacts with inner content on mobile.
+  if (lastTouchStartedInsideScrollable) return;
+
+  // Only consider sections whose title (h2 inside PageContainer) is at least
     // partially visible in the viewport — this makes snapping trigger when the
     // section title actually appears on screen rather than from a large distance.
     let closest: HTMLElement | null = null;
@@ -83,8 +95,11 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
       }
     });
   // Only snap if the distance is noticeable to avoid small jumps.
-  // Reduced to a very small threshold so snapping is less aggressive.
-  const SNAP_THRESHOLD = 8; // px
+  // Use a larger threshold on small screens so snapping only occurs when
+  // the user has scrolled a meaningful distance (narrows the effective
+  // snap area on mobile). This reduces accidental snapping on phones.
+  const isMobile = window.innerWidth <= 767;
+  const SNAP_THRESHOLD = isMobile ? 64 : 32; // px
     if (closest && minDist > SNAP_THRESHOLD) {
       const targetTop = closest.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - pad + lift;
       // use smooth native scrolling; JS fallback remains gentle
@@ -98,13 +113,69 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
     snapTimer = window.setTimeout(() => {
       snapTimer = null;
       snapToNearest();
-    }, 220) as unknown as number;
+    }, 260) as unknown as number;
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  // also catch touchend/wheel for immediate snap after gesture end
-  window.addEventListener('touchend', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 160) as unknown as number; }, { passive: true });
-  window.addEventListener('wheel', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 160) as unknown as number; }, { passive: true });
+
+  // Helper: determine if an element (or its ancestors) is a scrollable container
+  function hasScrollableAncestor(el: EventTarget | null) {
+    try {
+      let node = el as Node | null;
+      while (node && node instanceof HTMLElement) {
+        const style = getComputedStyle(node);
+        const overflowY = style.overflowY;
+        if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight) return true;
+        node = node.parentElement;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  // Track touchstart to know where the gesture began.
+  window.addEventListener('touchstart', (ev) => {
+    lastTouchStartedInsideScrollable = hasScrollableAncestor(ev.target);
+    // record initial touch Y
+    try { lastTouchY = (ev as TouchEvent).touches && (ev as TouchEvent).touches[0] ? (ev as TouchEvent).touches[0].clientY : null; } catch {}
+    lastTouchMoveDelta = 0;
+    // if a touchstart occurs, cancel any pending snap to avoid jumping mid-gesture
+    if (snapTimer) { window.clearTimeout(snapTimer); snapTimer = null; }
+  }, { passive: true });
+
+  // track touchmove direction to detect pull-down at very top
+  window.addEventListener('touchmove', (ev) => {
+    try {
+      const t = (ev as TouchEvent).touches && (ev as TouchEvent).touches[0];
+      if (t && lastTouchY != null) {
+        const delta = t.clientY - lastTouchY;
+        lastTouchMoveDelta = delta;
+      }
+    } catch {}
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    // After touchend, schedule an immediate snap if appropriate
+    if (snapTimer) window.clearTimeout(snapTimer);
+    snapTimer = window.setTimeout(() => {
+      snapTimer = null;
+      // If the user pulled down at the top of the page (positive delta while
+      // scrollY is at/near 0), don't run global snap — this was causing the
+      // odd behavior when slightly pulling down at the top on mobile.
+      if ((window.scrollY || window.pageYOffset) <= 8 && lastTouchMoveDelta > 6) {
+        lastTouchStartedInsideScrollable = false;
+        lastTouchY = null;
+        lastTouchMoveDelta = 0;
+        return;
+      }
+      snapToNearest();
+      lastTouchStartedInsideScrollable = false;
+      lastTouchY = null;
+      lastTouchMoveDelta = 0;
+    }, 200) as unknown as number;
+  }, { passive: true });
+
+  // Wheel/mouse end: similar behavior but don't use the nested-scroll guard
+  window.addEventListener('wheel', () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 200) as unknown as number; }, { passive: true });
 })();
 
 // Preload the main local background image with high priority so mobile
