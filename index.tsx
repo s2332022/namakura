@@ -99,7 +99,9 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
   // the user has scrolled a meaningful distance (narrows the effective
   // snap area on mobile). This reduces accidental snapping on phones.
   const isMobile = window.innerWidth <= 767;
-  const SNAP_THRESHOLD = isMobile ? 64 : 32; // px
+  // Make snapping more likely on mobile by reducing the threshold (wider
+  // effective snap range). Lower values = easier to snap.
+  const SNAP_THRESHOLD = isMobile ? 24 : 32; // px
     if (closest && minDist > SNAP_THRESHOLD) {
       const targetTop = closest.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - pad + lift;
       // use smooth native scrolling; JS fallback remains gentle
