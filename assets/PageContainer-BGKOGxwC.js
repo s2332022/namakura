@@ -1,1 +1,0 @@
-import{j as t}from"./index-Dy5l6KfM.js";const x=({title:e,children:s})=>t.jsxs("div",{className:"w-full mx-auto max-w-4xl px-8 py-16 md:py-24",children:[t.jsx("h2",{className:"text-4xl md:text-5xl font-black tracking-widest uppercase mb-8 text-center",children:e}),t.jsx("div",{className:"text-gray-200",children:s})]});export{x as P};
