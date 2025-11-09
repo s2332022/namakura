@@ -26,7 +26,7 @@ const ProfilePage: React.FC = () => {
           <li>
             <strong>きの</strong>
             {' '}- ギター／コーラス {' '}
-            <a href="https://www.instagram.com/kuchiat(略)" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@kuchiatama4kaku</a>
+            <a href="https://www.instagram.com/kkuchiatama4kaku" target="_blank" rel="noopener noreferrer" className="ml-2" style={{ color: '#E1306C' }}>@kuchiat(略)</a>
           </li>
           <li>
             <strong>伊藤元陽</strong>
