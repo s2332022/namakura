@@ -78,7 +78,7 @@ const AppleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const socialLinks = [
   { name: 'X', href: 'https://x.com/Namakura_Metro', icon: TwitterIcon, color: '#1DA1F2' },
   { name: 'Instagram', href: 'https://www.instagram.com/namakura', icon: InstagramIcon, color: '#E1306C' },
-  { name: 'YouTube', href: 'https://www.youtube.com/channel/UCFpddgdwvz_33p_L5t5O2jQ', icon: YouTubeIcon, color: '#FF0000' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@namakura_metro', icon: YouTubeIcon, color: '#FF0000' },
   { name: 'TikTok', href: 'https://www.tiktok.com/@namakura_metro?is_from_webapp=1&sender_device=pc', icon: TikTokIcon, color: '#69C9D0' },
   { name: 'Spotify', href: 'https://open.spotify.com/intl-ja/artist/5zLQTqkaQxOeUBFkKt9WVu?si=fltHFTXhTtG4_Uz84I9-gw', icon: SpotifyIcon, color: '#1DB954' },
   { name: 'Apple Music', href: 'https://music.apple.com/jp/artist/%E3%81%AA%E3%81%BE%E3%81%8F%E3%82%89%E3%83%A1%E3%83%88%E3%83%AD/1714566073', icon: AppleIcon, color: '#FA57C1' },
