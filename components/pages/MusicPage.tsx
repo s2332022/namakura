@@ -39,7 +39,7 @@ const releases = [
     title: 'theatre.V',
     type: 'Single',
     year: '2025',
-  artwork: 'assets/music/thatre.V.webp',
+    artwork: 'assets/music/theatre.V.webp',
     link: 'https://music.apple.com/jp/song/theatre-v/1813341104',
     spotify: 'https://open.spotify.com/album/2Zh2uK4ycfuwHkK38gCM3h',
   },
@@ -74,20 +74,27 @@ const MusicPage: React.FC = () => {
         {/* keep the list below for users who want details */}
         <div className="space-y-12">
           {releases.map((release, idx) => (
-            <div id={`release-${idx}`} key={release.title} className="flex flex-col md:flex-row items-center md:items-start gap-8">
-              <a href={release.link} target="_blank" rel="noopener noreferrer">
+            <div id={`release-${idx}`} key={`${release.title}-${idx}`} className="flex flex-col md:flex-row items-center md:items-start gap-8">
+              <a href={release.link} target="_blank" rel="noopener noreferrer" aria-label={`Open ${release.title} on Apple Music`}>
                 {/* Mobile: artwork full width above text. Desktop: fixed square artwork */}
-                <img src={release.artwork} alt={`${release.title} artwork`} className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105" />
+                <img
+                  src={release.artwork}
+                  alt={`${release.title} artwork`}
+                  title={`${release.title} artwork`}
+                  loading="lazy"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105"
+                />
               </a>
               <div className="text-center md:text-left">
                 <h3 className="text-3xl font-bold">{release.title}</h3>
                 <p className="text-lg text-gray-400">{release.type} - {release.year}</p>
                 <div className="flex justify-center md:justify-start space-x-4 mt-4">
-                  <a href={release.link} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--apple">
+                  <a href={release.link} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--apple" aria-label={`Listen to ${release.title} on Apple Music`}>
                     Listen on Apple Music
                   </a>
                   {release.spotify && (
-                    <a href={release.spotify} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--spotify">
+                    <a href={release.spotify} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--spotify" aria-label={`Listen to ${release.title} on Spotify`}>
                       Listen on Spotify
                     </a>
                   )}
