@@ -125,34 +125,22 @@ html, body, #root {
 
 /* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
 html, body {
-  /* Use proximity snapping for a gentler, less aggressive feel. This lets
-     the browser decide when to snap during short gestures and avoids
-     forcing an immediate jump every time. We also provide a JS fallback
-     but it will only snap after a slightly longer pause. */
-  scroll-snap-type: y proximity;
+  /* Scroll snapping disabled per user request. Keep smooth scroll behavior. */
+  scroll-snap-type: none;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
 }
 
 .snap-section {
-  scroll-snap-align: start;
-  /* subtract header height + snap offset so sections align slightly lower
-     under the fixed header (prevents content feeling too high). */
+  /* scroll-snap disabled; keep sizing so sections keep intended height */
   min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));
   display: block;
-  /* prefer to stop at each snap point to avoid skipping */
-  scroll-snap-stop: always;
 }
 
 /* account for fixed header when snapping */
 html, body, #root {
-  /* account for fixed header and possible bottom safe area on mobile
-     include an extra --snap-offset so snapped sections appear slightly lower
-     (user requested to "lower" the snap target). */
-  /* Pull snapped sections slightly higher by subtracting a small constant
-     from the padding so the section title sits closer to the top of the
-     viewport (but still below the header). Adjust this constant to taste. */
+  /* Keep scroll padding for header spacing, but snapping behavior is off. */
   scroll-padding-top: calc(var(--header-height) + var(--snap-offset) - 12px);
   scroll-padding-bottom: calc(var(--header-height) + var(--snap-offset) - 12px + env(safe-area-inset-bottom, 0px));
 }
@@ -250,14 +238,17 @@ html, body, #root {
 .social-link:hover .social-icon{
   transform: translateY(-4px) scale(1.06);
   background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  transition: opacity 360ms ease, transform 360ms ease;
+  opacity: 1;
+  will-change: opacity, transform;
 }
-/* Color the SVG to the brand color on hover using the inline --accent */
-.social-link:hover svg { color: var(--accent); }
+.artwork-wrapper img.loaded + .artwork-placeholder,
+.artwork-placeholder.hidden {
+  opacity: 0;
+  transform: scale(1);
+  pointer-events: none;
+}
 
-@media (max-width: 767px) {
-  .social-link .social-icon{ padding: 10px; }
-}
 
 
 
