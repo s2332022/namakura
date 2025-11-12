@@ -54,36 +54,6 @@ const releases = [
 ];
 
 const MusicPage: React.FC = () => {
-  const observerRef = React.useRef<IntersectionObserver | null>(null);
-
-  React.useEffect(() => {
-    // Observe .release-card elements and add `in-view` when they enter viewport
-    const els = Array.from(document.querySelectorAll<HTMLElement>('.release-card'));
-    if (!els.length) return;
-
-    if ('IntersectionObserver' in window) {
-      observerRef.current = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-          }
-        });
-      }, { threshold: 0.12 });
-
-      els.forEach((el) => observerRef.current?.observe(el));
-    } else {
-      // fallback: mark all as in-view
-      els.forEach((el) => el.classList.add('in-view'));
-    }
-
-    return () => {
-      if (observerRef.current) {
-        els.forEach((el) => observerRef.current?.unobserve(el));
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
   const handleSelect = (index: number) => {
     // scroll to the corresponding release section
     const id = `release-${index}`;
@@ -104,30 +74,27 @@ const MusicPage: React.FC = () => {
         {/* keep the list below for users who want details */}
         <div className="space-y-12">
           {releases.map((release, idx) => (
-            <div id={`release-${idx}`} key={`${release.title}-${idx}`} className="release-card flex flex-col md:flex-row items-center md:items-start gap-8">
-              {/* Artwork: non-interactive image (do not navigate when clicked). Buttons below remain interactive. */}
-              <div aria-hidden="true" className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64">
+            <div id={`release-${idx}`} key={`${release.title}-${idx}`} className="flex flex-col md:flex-row items-center md:items-start gap-8">
+              <a href={release.link} target="_blank" rel="noopener noreferrer" aria-label={`Open ${release.title} on Apple Music`}>
+                {/* Mobile: artwork full width above text. Desktop: fixed square artwork */}
                 <img
                   src={release.artwork}
                   alt={`${release.title} artwork`}
                   title={`${release.title} artwork`}
                   loading="lazy"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  className="w-full h-full object-cover shadow-lg transition-transform"
-                  style={{ pointerEvents: 'none', userSelect: 'none', cursor: 'default' }}
+                  className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105"
                 />
-              </div>
+              </a>
               <div className="text-center md:text-left">
                 <h3 className="text-3xl font-bold">{release.title}</h3>
                 <p className="text-lg text-gray-400">{release.type} - {release.year}</p>
                 <div className="flex justify-center md:justify-start space-x-4 mt-4">
                   <a href={release.link} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--apple" aria-label={`Listen to ${release.title} on Apple Music`}>
-                    <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     Listen on Apple Music
                   </a>
                   {release.spotify && (
                     <a href={release.spotify} target="_blank" rel="noopener noreferrer" className="release-btn release-btn--spotify" aria-label={`Listen to ${release.title} on Spotify`}>
-                      <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                       Listen on Spotify
                     </a>
                   )}
