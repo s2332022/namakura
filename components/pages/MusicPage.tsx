@@ -75,17 +75,19 @@ const MusicPage: React.FC = () => {
         <div className="space-y-12">
           {releases.map((release, idx) => (
             <div id={`release-${idx}`} key={`${release.title}-${idx}`} className="flex flex-col md:flex-row items-center md:items-start gap-8">
-              <a href={release.link} target="_blank" rel="noopener noreferrer" aria-label={`Open ${release.title} on Apple Music`}>
-                {/* Mobile: artwork full width above text. Desktop: fixed square artwork */}
+              {/* Artwork: show image only (non-interactive). Buttons below remain interactive. */}
+              <div aria-hidden="true" className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64">
                 <img
                   src={release.artwork}
                   alt={`${release.title} artwork`}
                   title={`${release.title} artwork`}
                   loading="lazy"
+                  decoding="async"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  className="w-full md:w-48 h-auto md:h-48 md:w-64 md:h-64 object-cover shadow-lg transition-transform hover:scale-105"
+                  className="w-full h-full object-cover shadow-lg transition-transform"
+                  style={{ pointerEvents: 'none', userSelect: 'none', cursor: 'default' }}
                 />
-              </a>
+              </div>
               <div className="text-center md:text-left">
                 <h3 className="text-3xl font-bold">{release.title}</h3>
                 <p className="text-lg text-gray-400">{release.type} - {release.year}</p>
