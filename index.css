@@ -242,11 +242,36 @@ html, body, #root {
   opacity: 1;
   will-change: opacity, transform;
 }
+.social-link svg .tiktok-accent{
+  opacity: 0;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.social-link:hover svg .tiktok-accent,
+.social-link:focus-visible svg .tiktok-accent{
+  opacity: 1;
+}
 .artwork-wrapper img.loaded + .artwork-placeholder,
 .artwork-placeholder.hidden {
   opacity: 0;
   transform: scale(1);
   pointer-events: none;
+}
+
+/* Ensure SVG icons inherit color and animate color on hover/focus for accessibility */
+.social-link .social-icon svg {
+  display: block;
+  color: inherit; /* inherit from anchor which exposes --accent */
+  transition: color 180ms ease, transform 180ms ease;
+}
+.social-link:hover .social-icon svg,
+.social-link:focus-visible .social-icon svg {
+  color: var(--accent);
+  transform: translateY(-3px) scale(1.04);
+}
+.social-link:focus-visible {
+  outline: 3px solid rgba(255,255,255,0.06);
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 
 
