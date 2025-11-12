@@ -259,42 +259,5 @@ html, body, #root {
   .social-link .social-icon{ padding: 10px; }
 }
 
-/* Release card subtle entrance */
-.release-card{
-  opacity: 0;
-  transform: translateY(6px);
-  transition: transform 420ms cubic-bezier(.22,.9,.31,1), opacity 420ms ease;
-}
-.release-card:nth-child(odd){ transition-delay: 40ms }
-.release-card.in-view{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Button icon styling and subtle color/transform animation */
-.release-btn { gap: 10px; display: inline-flex; align-items: center; }
-.release-btn .btn-icon { width: 16px; height: 16px; margin-right: 8px; transition: transform 220ms ease, color 220ms ease; }
-.release-btn:hover .btn-icon { transform: translateX(4px) scale(1.05); }
-
-
-/* artwork placeholder (LQIP blur-up) */
-.artwork-placeholder {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-  filter: blur(8px);
-  transform: scale(1.02);
-  transition: opacity 360ms ease, transform 360ms ease;
-  opacity: 1;
-  will-change: opacity, transform;
-}
-.artwork-wrapper img.loaded + .artwork-placeholder,
-.artwork-placeholder.hidden {
-  opacity: 0;
-  transform: scale(1);
-  pointer-events: none;
-}
-
-
 
 

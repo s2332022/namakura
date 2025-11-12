@@ -112,20 +112,10 @@ const MusicPage: React.FC = () => {
                   alt={`${release.title} artwork`}
                   title={`${release.title} artwork`}
                   loading="lazy"
-                  decoding="async"
-                  width={640}
-                  height={640}
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  onLoad={(e) => {
-                    const img = e.currentTarget as HTMLImageElement;
-                    img.style.opacity = '1';
-                    img.classList.add('loaded');
-                  }}
                   className="w-full h-full object-cover shadow-lg transition-transform"
-                  style={{ pointerEvents: 'none', userSelect: 'none', cursor: 'default', opacity: 0, transition: 'opacity 360ms ease' }}
+                  style={{ pointerEvents: 'none', userSelect: 'none', cursor: 'default' }}
                 />
-                {/* placeholder shown while image is loading (blur-up / skeleton) */}
-                <div className="artwork-placeholder" aria-hidden="true" />
               </div>
               <div className="text-center md:text-left">
                 <h3 className="text-3xl font-bold">{release.title}</h3>
