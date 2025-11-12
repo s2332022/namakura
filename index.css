@@ -234,4 +234,30 @@ html, body, #root {
   .release-btn { width: 48%; min-width: 0; }
 }
 
+/* Social links: visual hover accents (non-keyboard). Uses --accent variable set inline. */
+.social-link {
+  display: inline-block;
+  margin: 0 6px;
+  transition: transform 220ms ease, opacity 160ms ease;
+}
+.social-link .social-icon{
+  display: inline-block;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.16);
+  transition: transform 220ms ease, background 220ms ease, box-shadow 220ms ease;
+}
+.social-link:hover .social-icon{
+  transform: translateY(-4px) scale(1.06);
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+}
+/* Color the SVG to the brand color on hover using the inline --accent */
+.social-link:hover svg { color: var(--accent); }
+
+@media (max-width: 767px) {
+  .social-link .social-icon{ padding: 10px; }
+}
+
+
 

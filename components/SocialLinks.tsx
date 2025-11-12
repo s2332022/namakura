@@ -130,9 +130,11 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ isMenuOpen = false }) => {
                   window.location.href = link.href;
                 }
               }}
-              className="text-white transition-opacity hover:opacity-70"
+              className="social-link text-white transition-opacity hover:opacity-80"
+              // expose the brand color to CSS so hover styles can use it
+              style={{ ['--accent' as any]: link.color }}
             >
-                  <span className={spanClass}>
+                  <span className={`${spanClass} social-icon`}>
                     {
                       // Render inline SVG icons in monochrome: SVGs use currentColor so they inherit
                       // the parent's text color (anchor already has `text-white`).
