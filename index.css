@@ -45,6 +45,39 @@
 .site-splash__dots span:nth-child(3){ animation-delay:0.30s }
 @keyframes splash-dot{ 0%{opacity:0.15;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}100%{opacity:0.15;transform:translateY(0)} }
 
+/* loading-5 used in splash: animate per-character bounce; letters should be white */
+.loading-5{
+  display:inline-flex;
+  gap:4px;
+  align-items:center;
+  justify-content:center;
+}
+.loading-5 span{
+  display:inline-block;
+  color:#fff; /* user requested white letters */
+  font-weight:900;
+  font-size:1.1em;
+  line-height:1;
+  transform: translateY(0);
+  animation: animation-loading-5 1s infinite;
+}
+.loading-5 span:nth-of-type(2){ animation-delay: .06s; }
+.loading-5 span:nth-of-type(3){ animation-delay: .12s; }
+.loading-5 span:nth-of-type(4){ animation-delay: .18s; }
+.loading-5 span:nth-of-type(5){ animation-delay: .24s; }
+.loading-5 span:nth-of-type(6){ animation-delay: .30s; }
+.loading-5 span:nth-of-type(7){ animation-delay: .36s; }
+.loading-5 span:nth-of-type(8){ animation-delay: .42s; }
+.loading-5 span:nth-of-type(9){ animation-delay: .48s; }
+.loading-5 span:nth-of-type(10){ animation-delay: .54s; }
+.loading-5 span:nth-of-type(11){ animation-delay: .60s; }
+.loading-5 span:nth-of-type(12){ animation-delay: .66s; }
+.loading-5 span:nth-of-type(13){ animation-delay: .72s; }
+
+@keyframes animation-loading-5{
+  50%{ transform: translateY(10px); }
+}
+
 /* Content fade: while splash visible make main content inert/transparent */
 .site-content--hidden{ opacity: 0; transition: opacity 500ms ease; }
 .site-content--visible{ opacity: 1; transition: opacity 500ms ease; }
