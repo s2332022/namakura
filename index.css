@@ -83,6 +83,7 @@ html, body, #root {
   color:var(--muted);
   font-size:1.125rem;
 }
+/* hero meta and animated underline removed by user request */
 
 /* optional subtle pill under the hero for small meta (like reference) */
 .site-hero .hero-meta {
@@ -223,6 +224,25 @@ html, body, #root {
 .release-btn--apple { background: #fff; color: #000; }
 .release-btn--spotify { background: #1DB954; color: #000; }
 .release-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* --- CSS-Stock inspired fancy button variant --- */
+.release-btn.fancy {
+  background: linear-gradient(180deg, #fff, #f3f3f3);
+  color: #111;
+  box-shadow: 0 10px 30px rgba(17,24,39,0.35), inset 0 -2px 0 rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.release-btn.fancy::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(105,201,208,0.06), rgba(255,46,166,0.04));
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.release-btn.fancy:active{ transform: translateY(0); }
 
 @media (max-width: 767px) {
   /* On small screens, make buttons share the row and be equal width */
