@@ -125,17 +125,24 @@ html, body, #root {
 
 /* Scroll snapping: make the viewport (body) the scroll container so native scrolling snaps */
 html, body {
-  /* Scroll snapping disabled per user request. Keep smooth scroll behavior. */
-  scroll-snap-type: none;
+  /* Re-enable vertical scroll snapping. Use mandatory snapping so each
+     snap-section locks into place. This works across modern desktop and
+     mobile browsers. Keep smooth scroll for programmatic scrolls. */
+  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
   touch-action: pan-y;
+  -webkit-overflow-scrolling: touch; /* ensure momentum scrolling on iOS */
 }
 
 .snap-section {
   /* scroll-snap disabled; keep sizing so sections keep intended height */
+  /* Each section should snap to the start of the viewport. Using the
+     --vh variable prevents mobile UI chrome from breaking the sizing. */
   min-height: calc(var(--vh, 1vh) * 100 - (var(--header-height) + var(--snap-offset)));
   display: block;
+  scroll-snap-align: start;
+  scroll-snap-stop: always; /* make sure important sections don't partially snap away */
 }
 
 /* account for fixed header when snapping */
