@@ -116,6 +116,8 @@ const BackgroundSlider: React.FC<BackgroundSliderProps> = ({ images }) => {
           key={image + index}
           src={image}
           alt={`バンド なまくらメトロ イメージ ${index + 1}`}
+          loading="eager"
+          fetchPriority={index < 3 ? 'high' : 'auto'}
           className={`absolute w-full h-full object-cover grayscale brightness-[0.4] transition-opacity duration-[2800ms]
             ${index === displayedIndex && loaded[index] ? 'opacity-100' : 'opacity-0'} animate-ken-burns`}
           style={{
