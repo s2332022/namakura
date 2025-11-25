@@ -45,7 +45,7 @@ window.addEventListener('scroll', () => requestAnimationFrame(updateScrollVar));
 (() => {
   try {
     const base = (import.meta as any).env?.BASE_URL ?? '/';
-    const defaultLocal = `${base}assets/background.jpg`;
+    const defaultLocal = `${base}assets/backgrounds/background.jpg`;
     const img = new Image();
     // Hint the browser this is high-priority; some browsers support fetchPriority
     // and the `loading` attribute. This helps mobile show the hero background faster.

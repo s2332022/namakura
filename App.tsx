@@ -24,7 +24,7 @@ const base = (import.meta as any).env?.BASE_URL ?? '/';
 // any files discovered in `public/assets/backgrounds/` (generated to
 // `src/generated/backgrounds.ts`) and insert them between these two.
 const defaultLocal = `${base}assets/backgrounds/background.jpg`;
-const defaultFallback = `${base}assets/background.svg`;
+const defaultFallback = `${base}assets/backgrounds/background.jpg`;
 
 const initialImages = [defaultLocal, defaultFallback];
 
